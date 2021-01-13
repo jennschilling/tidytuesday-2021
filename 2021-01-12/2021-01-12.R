@@ -5,10 +5,18 @@
 #### Libraries ####
 
 library(tidyverse)
+
 library(magick)
 library(imager)
 library(DescTools)
 library(scales)
+
+library(sysfonts)
+library(showtext)
+
+# Font Setup
+font_add_google("Lato")
+showtext_auto()
 
 #### Get the Data ####
 
@@ -72,12 +80,28 @@ turner_oil_canvas_output <- turner_oil_canvas_output %>%
 # Make a plot
 # Code Source: https://chichacha.netlify.app/2019/01/19/extracting-colours-from-your-images-with-image-quantization/
 turner_oil_canvas_output %>%  
-  group_by(url) %>%
+  group_by(year) %>%
   mutate(ypos=row_number(hue)) %>%  ## alter stacking order
-  ggplot(aes(x=url, y=ypos, fill=hex)) +
+  ggplot(aes(x=year, y=ypos, fill=hex)) +
   geom_tile() +
   scale_fill_identity() +
   scale_y_continuous(breaks=NULL) +
-  theme_void() +
- # coord_polar() +
-  expand_limits(y=-1) 
+ # theme_void() +
+ #  coord_polar() +
+ # expand_limits(y=-1) +
+  theme_classic() + # added
+  labs(title = "Top 5 Colors in Turner's Oil Paint on Canvas Works by Year",
+       x = "Year",
+       caption = "TidyTuesday 12 Jan 2021 | Data: Tate Art Museum | Designer: Jenn Schilling | jennschilling.me") +
+  theme(axis.line.y = element_blank(),
+        axis.title.y = element_blank(),
+        text =element_text(family = "Lato", size = 34))
+
+
+# Save plot
+ggsave("2021-01-12\\turner_oil_colors.png",
+       plot = last_plot(),
+       device = "png",
+       width = 10,
+       height = 6,
+       dpi = 300)
