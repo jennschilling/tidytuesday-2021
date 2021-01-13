@@ -8,6 +8,7 @@ library(tidyverse)
 library(magick)
 library(imager)
 library(DescTools)
+library(scales)
 
 #### Get the Data ####
 
@@ -36,12 +37,14 @@ get_colorPal <- function(url, n=8, cs="RGB"){
   tmp <-im %>% 
     image_quantize(max=n, colorspace=cs) %>%  ## reduce colors 
     magick2cimg() %>%  ## prep for making data frame
+    RGBtoHSV() %>% # to get hue
     as.data.frame(wide="c") %>%  ## making it wide 
-    mutate(hex=rgb(c.1,c.2,c.3)) %>%
-    count(hex, sort=T) %>% 
+    mutate(hex=hsv(rescale(c.1, from=c(0,360)),c.2,c.3),
+           hue = c.1) %>%
+    count(hex, hue, sort=T) %>% 
     mutate(colorspace = cs)
   
-  return(tmp %>% select(hex) %>% mutate(url = url)) 
+  return(tmp %>% select(hex, hue, n) %>% mutate(url = url)) 
   
 }
 
@@ -57,16 +60,24 @@ turner_oil_canvas_input <- turner_oil_canvas %>%
   filter(url != 'http://www.tate.org.uk/art/images/work/N/N03/N03386_8.jpg') # remove record with file not found url
 
 # For each image - read it and find the colors
-
-# 10 records takes 8.1 seconds, so 240 should only take 3.2 minutes
 turner_oil_canvas_output <- pmap_df(turner_oil_canvas_input, get_colorPal)
 
-# Get hue for each color to organize visual
-turner_oil_canvas_output <- turner_oil_canvas_output %>%
-  mutate(hue = ColToHsv(hex)) # this doesn't work
-
-# Re-join using URL to get years
+# Re-join to artwork using URL to get year and title
 turner_oil_canvas_output <- turner_oil_canvas_output %>%
   left_join(., 
             artwork %>% select(thumbnailUrl, year, title), 
             by = c("url" = "thumbnailUrl"))
+
+
+# Make a plot
+# Code Source: https://chichacha.netlify.app/2019/01/19/extracting-colours-from-your-images-with-image-quantization/
+turner_oil_canvas_output %>%  
+  group_by(url) %>%
+  mutate(ypos=row_number(hue)) %>%  ## alter stacking order
+  ggplot(aes(x=url, y=ypos, fill=hex)) +
+  geom_tile() +
+  scale_fill_identity() +
+  scale_y_continuous(breaks=NULL) +
+  theme_void() +
+ # coord_polar() +
+  expand_limits(y=-1) 
