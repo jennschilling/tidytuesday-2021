@@ -7,6 +7,7 @@
 library(tidyverse)
 library(magick)
 library(imager)
+library(DescTools)
 
 #### Get the Data ####
 
@@ -40,24 +41,32 @@ get_colorPal <- function(url, n=8, cs="RGB"){
     count(hex, sort=T) %>% 
     mutate(colorspace = cs)
   
-  return(tmp %>% select(hex)) 
+  return(tmp %>% select(hex) %>% mutate(url = url)) 
   
 }
 
-get_colorPal(turner_oil_canvas$thumbnailUrl[1]) 
+get_colorPal(turner_oil_canvas$thumbnailUrl[1]) # Test
 
-# Sort by year, get the thumbnail URL
-# Set number of colors to 5 and colorspace to RGB
-# Remove records with no URL
-# Remove record with Not Found error for the URL
 turner_oil_canvas_input <- turner_oil_canvas %>%
-  arrange(year) %>%
-  select(thumbnailUrl) %>%
+  arrange(year) %>% # sort by year
+  select(thumbnailUrl) %>% # get thumbnail URL
   rename(url = thumbnailUrl) %>%
-  mutate(n = 5,
-         cs = "RGB") %>%
-  filter(!is.na(url)) %>%
-  filter(url != 'http://www.tate.org.uk/art/images/work/N/N03/N03386_8.jpg')
+  mutate(n = 5, # set number of colors to 5
+         cs = "RGB") %>% # set colorspace to RGB
+  filter(!is.na(url)) %>% # remove records with no URL
+  filter(url != 'http://www.tate.org.uk/art/images/work/N/N03/N03386_8.jpg') # remove record with file not found url
 
 # For each image - read it and find the colors
+
+# 10 records takes 8.1 seconds, so 240 should only take 3.2 minutes
 turner_oil_canvas_output <- pmap_df(turner_oil_canvas_input, get_colorPal)
+
+# Get hue for each color to organize visual
+turner_oil_canvas_output <- turner_oil_canvas_output %>%
+  mutate(hue = ColToHsv(hex)) # this doesn't work
+
+# Re-join using URL to get years
+turner_oil_canvas_output <- turner_oil_canvas_output %>%
+  left_join(., 
+            artwork %>% select(thumbnailUrl, year, title), 
+            by = c("url" = "thumbnailUrl"))
