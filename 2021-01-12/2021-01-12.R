@@ -11,12 +11,12 @@ library(imager)
 library(DescTools)
 library(scales)
 
-library(sysfonts)
-library(showtext)
-
-# Font Setup
-font_add_google("Lato")
-showtext_auto()
+# library(sysfonts)
+# library(showtext)
+# 
+# # Font Setup
+# font_add_google("Lato")
+# showtext_auto()
 
 #### Get the Data ####
 
