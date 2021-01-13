@@ -90,12 +90,12 @@ turner_oil_canvas_output %>%
  #  coord_polar() +
  # expand_limits(y=-1) +
   theme_classic() + # added
-  labs(title = "Top 5 Colors in Turner's Oil Paint on Canvas Works by Year",
+  labs(title = "Most Used Colors in Turner's Oil Paint on Canvas Works by Year",
+       subtitle = "For each work, the top five colors were extracted.",
        x = "Year",
        caption = "TidyTuesday 12 Jan 2021 | Data: Tate Art Museum | Designer: Jenn Schilling | jennschilling.me") +
   theme(axis.line.y = element_blank(),
-        axis.title.y = element_blank(),
-        text =element_text(family = "Lato", size = 34))
+        axis.title.y = element_blank())
 
 
 # Save plot
