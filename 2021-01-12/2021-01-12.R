@@ -91,7 +91,7 @@ turner_oil_canvas_output %>%
  # expand_limits(y=-1) +
   theme_classic() + # added
   labs(title = "Most Used Colors in Turner's Oil Paint on Canvas Works by Year",
-       subtitle = "For each work, the top five colors were extracted. The colors are stacked by the year the works were produced.",
+       subtitle = "For each work, the top five colors were extracted. The colors are stacked by the year the works were produced and organized by hue.",
        x = "Year",
        caption = "TidyTuesday 12 Jan 2021 | Data: Tate Art Museum | Designer: Jenn Schilling | jennschilling.me") +
   theme(axis.line.y = element_blank(),
