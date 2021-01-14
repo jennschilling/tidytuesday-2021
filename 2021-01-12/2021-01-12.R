@@ -105,3 +105,27 @@ ggsave("2021-01-12\\turner_oil_colors.png",
        width = 10,
        height = 6,
        dpi = 300)
+
+# Make a plot (circular)
+# Code Source: https://chichacha.netlify.app/2019/01/19/extracting-colours-from-your-images-with-image-quantization/
+turner_oil_canvas_output %>%  
+  group_by(url) %>%
+  mutate(ypos=row_number(hue)) %>%  ## alter stacking order
+  ggplot(aes(x=url, y=ypos, fill=hex)) +
+  geom_tile() +
+  scale_fill_identity() +
+  scale_y_continuous(breaks=NULL) +
+  theme_void() +
+  coord_polar() +
+  expand_limits(y=-1) +
+  labs(title = "Most Used Colors in Turner's Oil Paint on Canvas Works",
+       subtitle = "For each work, the top five colors were extracted. Each radial represents a painting.",
+       x = "Year",
+       caption = "TidyTuesday 12 Jan 2021 | Data: Tate Art Museum | Designer: Jenn Schilling | jennschilling.me") 
+
+ggsave("2021-01-12\\turner_oil_colors_circle.png",
+       plot = last_plot(),
+       device = "png",
+       width = 10,
+       height = 6,
+       dpi = 300)
