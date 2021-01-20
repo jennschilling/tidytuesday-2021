@@ -66,6 +66,13 @@ map +
   theme_void() +
   theme(aspect.ratio = 1) # Resize map nicely
 
+ggsave("2021-01-19\\county_female_map.png",
+       plot = last_plot(),
+       device = "png",
+       width = 10,
+       height = 6,
+       dpi = 300)
+
 # Population by County
 pop <- ggplot(data = gender_prop,
               aes(y = reorder(County, Total),
@@ -75,7 +82,8 @@ pop <- ggplot(data = gender_prop,
 pop + 
   geom_bar(stat = "identity") +
   geom_text(hjust = "left",
-            color = "Purple") +
+            color = "Purple",
+            size = 3) +
   scale_x_continuous(expand = expansion(mult = c(0, .1)),  # move bars to labels 
                      labels = scales::comma) +
   geom_bar(data = gender_prop, 
@@ -83,10 +91,20 @@ pop +
                x = Total * prop_female),
            stat = "identity",
            fill = "Purple") +
-  labs(title = "Population by County",
+  labs(title = "Population by County in Kenya in 2019",
        subtitle = "Purple bar shows number of female identifying people. 
 Percentage shows proportion of Female identifying people.",
        x = "Population",
-       y = "") +
-  theme_classic()
+       y = "",
+       caption = "TidyTuesday 19 Jan 2021 | Data: {rKenyaCensus} | Designer: Jenn Schilling | jennschilling.me") +
+  theme_classic() +
+  theme(axis.ticks = element_blank(),
+        axis.line.y = element_blank(),
+        axis.text.y = element_text(size = 7))
 
+ggsave("2021-01-19\\county_female_bar.png",
+       plot = last_plot(),
+       device = "png",
+       width = 10,
+       height = 6,
+       dpi = 300)
