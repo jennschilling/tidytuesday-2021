@@ -77,9 +77,28 @@ plastics_company %>%
 
 # Code Source: https://cran.r-project.org/web/packages/ggalluvial/vignettes/ggalluvial.html
 
-ggplot(plastics_company,
-       aes(y = total,
+plastics_company %>%
+  # Fix PepsiCo names so the years match
+  mutate(parent_company = ifelse(parent_company == 'Pepsico',
+                                 'PepsiCo',
+                                 parent_company)) %>%
+  # Remove grand total and empty plastic types
+  filter(plastic_type != 'grand_total' &
+           plastic_type != 'empty') %>%
+  # Get companies with highest totals
+  filter(parent_company %in% c(
+                              'The Coca-Cola Company',
+                              'PepsiCo',
+                              'Nestlé',
+                              'Pure Water, Inc.',
+                              'Universal Robina Corporation',
+                              'Colgate-Palmolive',
+                              'Unilever'
+                              )) %>%
+  # Just 2020
+  filter(year == 2020) %>%
+ggplot(aes(y = total,
            axis1 = plastic_type,
            axis2 = parent_company)) +
-  geom_alluvium(aes(fill = as.factor(year)), width = 1/12) +
-  geom_label(stat = "stratum", aes(label = after_stat(stratum)))
+  geom_alluvium(aes(fill = as.factor(plastic_type)), width = 1/12) +
+  geom_label(stat = "stratum", aes(label = after_stat(stratum))) 
