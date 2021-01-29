@@ -77,7 +77,7 @@ plastics_company %>%
 
 # Code Source: https://cran.r-project.org/web/packages/ggalluvial/vignettes/ggalluvial.html
 
-plastics_company %>%
+plastics_company_sub <- plastics_company %>%
   # Fix PepsiCo names so the years match
   mutate(parent_company = ifelse(parent_company == 'Pepsico',
                                  'PepsiCo',
@@ -97,8 +97,16 @@ plastics_company %>%
                               )) %>%
   # Just 2020
   filter(year == 2020) %>%
-ggplot(aes(y = total,
-           axis1 = plastic_type,
-           axis2 = parent_company)) +
+  # Capitalize Plastic Code
+  mutate(plastic_type = toupper(plastic_type))
+
+ggplot(plastics_company_sub,
+       aes(y = total,
+           axis1 = fct_reorder(plastic_type, total),
+           axis2 = fct_reorder(parent_company, total))) +
   geom_alluvium(aes(fill = as.factor(plastic_type)), width = 1/12) +
-  geom_label(stat = "stratum", aes(label = after_stat(stratum))) 
+  geom_stratum(width = 1/8) +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum))) +
+  coord_flip() +
+  guides(fill = FALSE) +
+  theme_void()
