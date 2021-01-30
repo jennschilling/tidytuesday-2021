@@ -7,6 +7,7 @@
 library(tidyverse)
 library(skimr)
 library(ggalluvial)
+library(ggrepel)
 
 #### Get the Data ####
 
@@ -104,11 +105,27 @@ plastics_company_sub <- plastics_company %>%
 ggplot(plastics_company_sub,
        aes(y = total,
            axis1 = fct_reorder(plastic_type, total),
-           axis2 = fct_reorder(parent_company, total))) +
-  geom_alluvium(aes(fill = as.factor(plastic_type)), width = 1/16) +
-  geom_stratum(width = 1/16) +
+           axis2 = fct_reorder(parent_company, total),
+           fill = fct_reorder(plastic_type, total))) +
+  geom_alluvium(width = 1/16) +
+  geom_stratum(width = 1/16, alpha = 0.5) +
   geom_text(stat = "stratum", 
-            aes(label = after_stat(stratum))) +
+            aes(label = fct_reorder(parent_company, total)),
+            nudge_x = 0.05) + #after_stat(stratum))) +
   coord_flip() +
-  guides(fill = FALSE) +
-  theme_void()
+  labs(title = "Plastic Types from the Companies with the Most Plastic Found Worldwide in 2020",
+       subtitle = "Plastic waste is collected by volunteers around the world at Break Free from Plastic cleanup events.Volunteers track the number and types of plastic found by company.
+This graph represents the volume of plastic by type and company collected at events in 2020, for the  six companies with the most plastic found over all the events.",
+       fill = "Plastic Type") +
+ # guides(fill = FALSE) +
+  theme_void() +
+  scale_fill_brewer(palette = "Dark2",
+    limits =  c("PP", "O", "PET", "HDPE", "LDPE", "PVC", "PS"),
+    labels =  c("Polypropylene", 
+                "Other", 
+                "Polyethylene terephthalate", 
+                "High-density polyethylene", 
+                "Low-density polyethylene", 
+                "Polyvinyl chloride", 
+                "Polystyrene")) +
+  theme(legend.position = "bottom")
