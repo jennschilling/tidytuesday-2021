@@ -7,7 +7,14 @@
 library(tidyverse)
 library(skimr)
 library(ggalluvial)
-library(ggrepel)
+# library(showtext)
+# 
+# # Get font
+# font_add_google(name = "Roboto",
+#                 family = "Roboto")
+# 
+# showtext_auto()
+
 
 #### Get the Data ####
 
@@ -116,7 +123,8 @@ ggplot(plastics_company_sub,
   labs(title = "Plastic Types from the Companies with the Most Plastic Found Worldwide in 2020",
        subtitle = "Plastic waste is collected by volunteers around the world at Break Free from Plastic cleanup events.Volunteers track the number and types of plastic found by company.
 This graph represents the volume of plastic by type and company collected at events in 2020, for the  six companies with the most plastic found over all the events.",
-       fill = "Plastic Type") +
+       fill = "Plastic Type",
+       caption = "TidyTuesday 26 Jan 2021 | Data: Break Free From Plastic | Designer: Jenn Schilling | jennschilling.me") +
  # guides(fill = FALSE) +
   theme_void() +
   scale_fill_brewer(palette = "Dark2",
@@ -129,3 +137,10 @@ This graph represents the volume of plastic by type and company collected at eve
                 "Polyvinyl chloride", 
                 "Polystyrene")) +
   theme(legend.position = "bottom")
+
+ggsave("2021-01-26\\sankey_plastic.png",
+       plot = last_plot(),
+       device = "png",
+       width = 14,
+       height = 8,
+       dpi = 500)
