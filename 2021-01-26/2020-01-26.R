@@ -99,14 +99,16 @@ plastics_company_sub <- plastics_company %>%
   filter(year == 2020) %>%
   # Capitalize Plastic Code
   mutate(plastic_type = toupper(plastic_type))
+ 
 
 ggplot(plastics_company_sub,
        aes(y = total,
            axis1 = fct_reorder(plastic_type, total),
            axis2 = fct_reorder(parent_company, total))) +
-  geom_alluvium(aes(fill = as.factor(plastic_type)), width = 1/12) +
-  geom_stratum(width = 1/8) +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum))) +
+  geom_alluvium(aes(fill = as.factor(plastic_type)), width = 1/16) +
+  geom_stratum(width = 1/16) +
+  geom_text(stat = "stratum", 
+            aes(label = after_stat(stratum))) +
   coord_flip() +
   guides(fill = FALSE) +
   theme_void()
