@@ -6,7 +6,8 @@
 
 library(tidyverse)
 library(ggthemes)
-library(skimr)
+# library(hrbrthemes)
+library(gridExtra)
 
 #### Get the Data ####
 
@@ -108,7 +109,12 @@ completions <- rbind(hs_students_wide,
                      bach_students_wide) %>%
   mutate(diff_total = perc_race_eth - perc_all,
          deg = factor(deg, 
-                      levels = c("High School Diploma", "Bachelor's Degree"))) 
+                      levels = c("High School Diploma", "Bachelor's Degree")),
+         race_ethnicity = case_when(
+           grepl("Asian/Pacific Islander - Asian", race_ethnicity) ~ "Asian",
+           grepl("Asian/Pacific Islander - Pacific Islander", race_ethnicity) ~ "Pacific Islander",
+           TRUE ~ race_ethnicity
+         )) 
 
 # Follow a similar process for HBCU data
 
@@ -130,32 +136,83 @@ hbcu_enrl_long <- hbcu_enrl %>%
 
 # Completions
 
-ggplot(subset(completions, year >= 2006),
-       aes(x = year, 
-           y = perc_race_eth,
-           color = sex)) +
-  geom_line() +
-  facet_grid(deg ~ race_ethnicity)
-
-ggplot(subset(completions, year >= 2006),
+race_ethn_plot <- ggplot(subset(completions, year >= 2006),
        aes(x = year, 
            y = diff_total,
            fill = sex)) +
   geom_bar(stat = "Identity",
            position = "dodge") +
-  facet_grid(deg ~ race_ethnicity) +
-  labs(subtitle = "Difference between the percent of all persons and the percent of persons of each race/ethnicity group 25+ to attain a High School Diploma or Bachelor's Degree",
-       xlab = "",
-       ylab = "") +
-  theme_linedraw()
+  facet_grid(deg ~ race_ethnicity,
+             switch = "y") +
+  labs(title = "High school completion and bachelor's attainment among people 25 and older (2006-2015)",
+       subtitle = "Difference between the percent of all persons and the percent of persons by each race/ethnicity group",
+       x = "",
+       y = "") +
+  scale_x_continuous(breaks = c(2006, 2008, 2010, 2012, 2014, 2016),
+                     labels = c("'06", "'08", "'10", "'12", "'14", "'16")) +
+  scale_fill_brewer(palette = "Accent",
+                    direction = -1,
+                    labels = c("Female", "Male")) +
+  scale_y_continuous(position = "right") +
+  theme_fivethirtyeight() +
+  theme(legend.title = element_blank())
 
-
-
-ggplot(subset(completions, year >= 2006),
-       aes(x = year, 
-           y = perc_all,
-           color = sex)) +
-  geom_line() +
+all_plot <- subset(completions, year >= 2006) %>%
+  select(year, deg, sex, perc_all) %>%
+  unique() %>%
+ggplot(aes(x = year, 
+           y = perc_all / 100,
+           fill = sex)) +
+  geom_bar(stat = "identity",
+           position = "dodge") +
   facet_wrap(~ deg, 
-             ncol = 1) +
-  labs(subtitle = "Percent of all persons 25+ to attain a High School Diploma or Bachelor's Degree")
+             ncol = 1,
+             strip.position = "left") +
+  labs(subtitle = "Percent of all persons",
+       x = "",
+       y = "") +
+  scale_x_continuous(breaks = c(2006, 2008, 2010, 2012, 2014, 2016),
+                     labels = c("'06", "'08", "'10", "'12", "'14", "'16")) +
+  scale_fill_brewer(palette = "Accent",
+                    direction = -1,
+                    labels = c("Female", "Male")) +
+  scale_y_continuous(limits = c(0, 1),
+                     position = "right",
+                     labels = scales::percent) +
+  theme_fivethirtyeight() +
+  theme(legend.title = element_blank())
+
+
+caption_plot <- ggplot() +
+  labs(caption = "TidyTuesday 02 Feb 2021 | Data: Data.World - NCES | Viz: Jenn Schilling | jennschilling.me") +
+  theme_fivethirtyeight() 
+
+plot_legend <- cowplot::get_legend(all_plot)
+
+
+blank <- grid::rectGrob(gp = grid::gpar(fill = "#F0F0F0", col = "#F0F0F0"))
+
+comb_plot <- grid.arrange(blank,
+                          all_plot + guides(fill = FALSE), 
+                          plot_legend,
+                          blank,
+                          caption_plot,
+                          heights = c(0.5, 4, 1, 1, 1))
+
+comb_plot <- cowplot::ggdraw(comb_plot) + 
+  theme(plot.background = element_rect(fill = "#F0F0F0", color = NA))
+
+final <- grid.arrange(
+  race_ethn_plot + guides(fill = FALSE),
+  comb_plot,
+  nrow = 1,
+  widths = c(2.5, 1)
+)
+
+ggsave("2021-02-02\\bach_hs_attain.png",
+       plot = final,
+       device = "png",
+       width = 21,
+       height = 7,
+       dpi = 500)
+
