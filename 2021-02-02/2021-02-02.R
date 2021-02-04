@@ -223,7 +223,8 @@ summary <- subset(completions, year >= 2006) %>%
   select(year, deg, sex, perc_all) %>%
   unique() 
 
-ggplot() +
+# Dot plot for women 
+women <- ggplot() +
   geom_point(data = subset(completions, year >= 2006 & sex == 'female'),
              mapping = aes(x = 1,
                            y = perc_race_eth / 100,
@@ -251,3 +252,46 @@ ggplot() +
         axis.text.x = element_blank(),
         axis.ticks.x = element_blank())
 
+# Dot plot for men
+
+men <- ggplot() +
+  geom_point(data = subset(completions, year >= 2006 & sex == 'male'),
+             mapping = aes(x = 1,
+                           y = perc_race_eth / 100,
+                           color = race_ethnicity),
+             size = 3) +
+  geom_hline(data = subset(summary, sex == 'male'),
+             mapping = aes(yintercept = perc_all / 100),
+             alpha = 0.6,
+             size = 1) +
+  facet_grid(deg ~ year,             
+             switch = "both") +
+  labs(title = "High school completion and bachelor's degree attainment among men",
+       subtitle = "Points show the proportion of men by race/ethnicity; line shows the proportion of all men",
+       x = "",
+       y = "") +
+  scale_color_brewer(palette = "Dark2",
+                     direction = -1) +
+  scale_y_continuous(limits = c(0, 1),
+                     position = "right",
+                     labels = scales::percent) +
+  scale_x_continuous(limits = c(0.99, 1.01),
+                     breaks = NULL) +
+  theme_fivethirtyeight() +
+  theme(legend.title = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+
+ggsave("2021-02-02\\bach_hs_attain_women.png",
+       plot = women,
+       device = "png",
+       width = 7,
+       height = 5,
+       dpi = 500)
+
+ggsave("2021-02-02\\bach_hs_attain_men.png",
+       plot = men,
+       device = "png",
+       width = 7,
+       height = 5,
+       dpi = 500)
