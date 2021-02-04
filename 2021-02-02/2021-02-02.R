@@ -229,14 +229,14 @@ women <- ggplot() +
              mapping = aes(x = 1,
                            y = perc_race_eth / 100,
                            color = race_ethnicity),
-             size = 3) +
+             size = 2) +
   geom_hline(data = subset(summary, sex == 'female'),
              mapping = aes(yintercept = perc_all / 100),
              alpha = 0.6,
              size = 1) +
   facet_grid(deg ~ year,             
              switch = "both") +
-  labs(title = "High school completion and bachelor's degree attainment among women",
+  labs(title = "High school completion and bachelor's degree attainment among women (2006-2016)",
        subtitle = "Points show the proportion of women by race/ethnicity; line shows the proportion of all women",
        x = "",
        y = "") +
@@ -259,14 +259,14 @@ men <- ggplot() +
              mapping = aes(x = 1,
                            y = perc_race_eth / 100,
                            color = race_ethnicity),
-             size = 3) +
+             size = 2) +
   geom_hline(data = subset(summary, sex == 'male'),
              mapping = aes(yintercept = perc_all / 100),
              alpha = 0.6,
              size = 1) +
   facet_grid(deg ~ year,             
              switch = "both") +
-  labs(title = "High school completion and bachelor's degree attainment among men",
+  labs(title = "High school completion and bachelor's degree attainment among men (2006-2016)",
        subtitle = "Points show the proportion of men by race/ethnicity; line shows the proportion of all men",
        x = "",
        y = "") +
@@ -285,13 +285,13 @@ men <- ggplot() +
 ggsave("2021-02-02\\bach_hs_attain_women.png",
        plot = women,
        device = "png",
-       width = 7,
-       height = 5,
-       dpi = 500)
+       width = 11,
+       height = 6,
+       dpi = 300)
 
 ggsave("2021-02-02\\bach_hs_attain_men.png",
        plot = men,
        device = "png",
-       width = 7,
-       height = 5,
-       dpi = 500)
+       width = 11,
+       height = 6,
+       dpi = 300)
