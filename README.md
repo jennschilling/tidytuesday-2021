@@ -1,6 +1,6 @@
 # #TidyTuesday 2021
 
-[#TidTuesday 2021 Data Source](https://github.com/rfordatascience/tidytuesday/tree/master/data/2021)
+Data visualizations developed in R using data from [#TidTuesday 2021](https://github.com/rfordatascience/tidytuesday/tree/master/data/2021).
 
 # 02 February 2021
 ![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-02-02/bach_hs_attain_women.png)
