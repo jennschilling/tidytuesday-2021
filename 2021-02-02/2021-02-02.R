@@ -238,6 +238,7 @@ women <- ggplot() +
              switch = "both") +
   labs(title = "High school completion and bachelor's degree attainment among women (2006-2016)",
        subtitle = "Points show the proportion of women by race/ethnicity; line shows the proportion of all women",
+       caption = "TidyTuesday 02 Feb 2021 | Data: Data.World - NCES | Viz: Jenn Schilling | jennschilling.me",
        x = "",
        y = "") +
   scale_color_brewer(palette = "Dark2",
@@ -250,7 +251,9 @@ women <- ggplot() +
   theme_fivethirtyeight() +
   theme(legend.title = element_blank(),
         axis.text.x = element_blank(),
-        axis.ticks.x = element_blank())
+        axis.ticks.x = element_blank(),
+        plot.title.position = "plot",
+        plot.caption.position = "plot")
 
 # Dot plot for men
 
@@ -268,6 +271,7 @@ men <- ggplot() +
              switch = "both") +
   labs(title = "High school completion and bachelor's degree attainment among men (2006-2016)",
        subtitle = "Points show the proportion of men by race/ethnicity; line shows the proportion of all men",
+       caption = "TidyTuesday 02 Feb 2021 | Data: Data.World - NCES | Viz: Jenn Schilling | jennschilling.me",
        x = "",
        y = "") +
   scale_color_brewer(palette = "Dark2",
@@ -280,7 +284,9 @@ men <- ggplot() +
   theme_fivethirtyeight() +
   theme(legend.title = element_blank(),
         axis.text.x = element_blank(),
-        axis.ticks.x = element_blank())
+        axis.ticks.x = element_blank(),
+        plot.title.position = "plot",
+        plot.caption.position = "plot")
 
 ggsave("2021-02-02\\bach_hs_attain_women.png",
        plot = women,
