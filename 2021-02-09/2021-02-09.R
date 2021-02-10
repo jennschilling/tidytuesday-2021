@@ -112,6 +112,7 @@ ggplot(subset(race_wealth,
            y = wealth_family, # (median) family wealth, normalized to 2016 dollars
            color = race)) +
   geom_line() +
+  scale_color_brewer(palette = "Dark2") +
   geom_point()
 
 ggplot(subset(race_wealth, 
@@ -122,6 +123,7 @@ ggplot(subset(race_wealth,
            y = wealth_family, # (average) family wealth, normalized to 2016 dollars
            color = race)) +
   geom_line() +
+  scale_color_brewer(palette = "Dark2") +
   geom_point()
 
 
@@ -130,6 +132,7 @@ ggplot(subset(home_owner),
            y = home_owner_pct, # homeownership percentage
            color = race)) +
   geom_line() +
+  scale_color_brewer(palette = "Dark2") +
   geom_point()
 
 
@@ -138,6 +141,7 @@ ggplot(subset(retirement),
            y = retirement, # average family liquid retirement savings, normalized to 2016 dollars
            color = race)) +
   geom_line() +
+  scale_color_brewer(palette = "Dark2") +
   geom_point()
 
 ggplot(subset(student_debt),
@@ -145,6 +149,7 @@ ggplot(subset(student_debt),
            y = loan_debt_pct, # percent of families with student loan debt
            color = race)) +
   geom_line() +
+  scale_color_brewer(palette = "Dark2") +
   geom_point()
 
 ggplot(subset(student_debt),
@@ -152,4 +157,5 @@ ggplot(subset(student_debt),
            y = loan_debt, # average family student loan debt for aged 25-55, normalized to 2016 dollars
            color = race)) +
   geom_line() +
+  scale_color_brewer(palette = "Dark2") +
   geom_point()
