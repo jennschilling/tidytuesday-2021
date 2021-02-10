@@ -6,6 +6,7 @@
 
 library(tidyverse)
 library(skimr)
+library(ggthemes)
 
 #### Get the Data ####
 
@@ -31,10 +32,8 @@ skim(income_distribution) # Starts in 1967, 8 racial groups
 ### Make Graphs ####
 
 ggplot(subset(income_distribution,
-              race %in% c('Black Alone', 
-                          'White Alone, Not Hispanic', 
-                          'Hispanic (Any Race)') &
-                year >= 1983),
+              race %in% c('Black Alone') &
+                year %in% c(1983, 2019)),
        aes(x = factor(income_bracket,
                       levels = c('Under $15,000',
                                  '$15,000 to $24,999',
@@ -45,12 +44,65 @@ ggplot(subset(income_distribution,
                                  '$100,000 to $149,999',
                                  '$150,000 to $199,999',
                                  '$200,000 and over')),
-           y = income_distribution,
-           group = race,
-           fill = race)) +
-  geom_col(position = "dodge") +
-  facet_grid(race ~ year) #, 
-             #ncol = 1) 
+           y = income_distribution)) +
+  geom_col(fill = "#1b9e77") +
+  facet_grid(~ year) +
+  labs(x = "",
+       y = "",
+       subtitle = 'Black Alone') +
+  guides(fill = FALSE,
+         color = FALSE) +
+  coord_flip() +
+  theme_void()
+
+
+ggplot(subset(income_distribution,
+              race %in% c('White Alone, Not Hispanic') &
+                year %in% c(1983, 2019)),
+       aes(x = factor(income_bracket,
+                      levels = c('Under $15,000',
+                                 '$15,000 to $24,999',
+                                 '$25,000 to $34,999',
+                                 '$35,000 to $49,999',
+                                 '$50,000 to $74,999',
+                                 '$75,000 to $99,999',
+                                 '$100,000 to $149,999',
+                                 '$150,000 to $199,999',
+                                 '$200,000 and over')),
+           y = income_distribution)) +
+  geom_col(fill = "#7570b3") +
+  facet_grid(~ year) +
+  labs(x = "",
+       y = "",
+       subtitle = 'White Alone, Not Hispanic') +
+  guides(fill = FALSE,
+         color = FALSE) +
+  coord_flip() +
+  theme_void()
+
+ggplot(subset(income_distribution,
+              race %in% c('Hispanic (Any Race)') &
+                year %in% c(1983, 2019)),
+       aes(x = factor(income_bracket,
+                      levels = c('Under $15,000',
+                                 '$15,000 to $24,999',
+                                 '$25,000 to $34,999',
+                                 '$35,000 to $49,999',
+                                 '$50,000 to $74,999',
+                                 '$75,000 to $99,999',
+                                 '$100,000 to $149,999',
+                                 '$150,000 to $199,999',
+                                 '$200,000 and over')),
+           y = income_distribution)) +
+  geom_col(fill = "#d95f02") +
+  facet_grid(~ year) +
+  labs(x = "",
+       y = "",
+       subtitle = 'Hispanic (Any Race)') +
+  guides(fill = FALSE,
+         color = FALSE) +
+  coord_flip() +
+  theme_void()
 
 ggplot(subset(race_wealth, 
               year >= 1983 &
