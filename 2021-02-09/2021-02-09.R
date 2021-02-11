@@ -36,7 +36,7 @@ ggplot(subset(income_distribution,
               race %in% c('Black Alone',
                           'White Alone, Not Hispanic',
                           'Hispanic (Any Race)') &
-                year %in% c(1983, 2019)) %>%
+                year %in% c(1989, 2016)) %>%
          mutate(race = case_when(
            race == 'Black Alone' ~ 'Black',
            race == 'Hispanic (Any Race)' ~ 'Hispanic',
@@ -57,11 +57,20 @@ ggplot(subset(income_distribution,
   geom_col() +
   facet_grid(race ~ year,
              switch = "y") +
-  labs(title = '**Income Distribution by Race in 1983 and 2019**',
-       subtitle = '*Under $15,000 to $200,000 and over*<br>') +
+  labs(title = '**Income Distribution by Race in 1989 and 2016**',
+       subtitle = '*Proportion of people by income bracket*<br>') +
   scale_fill_brewer(palette = "Dark2") +
   guides(fill = FALSE,
          color = FALSE) +
+  scale_x_discrete(labels = c('under<br>$15,000',
+                              '',
+                              '',
+                              '',
+                              '',
+                              '',
+                              '',
+                              '',
+                              'over<br>$200,000')) +
   theme_void() +
   theme(plot.title = element_markdown(size = 16),
         plot.subtitle = element_markdown(size = 12),
@@ -74,26 +83,37 @@ ggplot(subset(income_distribution,
         strip.text.x = element_markdown(vjust = 1, 
                                         size = 14,
                                         face = 'bold'),
+        axis.text.x = element_markdown(size = 8),
         plot.background = element_rect(fill = "#F0F0F0", color = NA),
         plot.margin = margin(t = 25, r = 25, b = 10, l = 25))
 
 
-
+# NEed to fix jagged line
 
 ggplot(subset(race_wealth, 
-              year %in% c(1983, 2016) &
+              year %in% c(1989, 2016) &
               type == 'Median' &
-              !is.na(wealth_family)),
+              race != 'Non-White'),
        aes(x = year,
            y = wealth_family, # (median) family wealth, normalized to 2016 dollars
            color = factor(race, levels = c('Black', 'Hispanic', 'White', 'Non-White')))) +
-  geom_line() +
-  geom_text(aes(label = race)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
   scale_color_brewer(palette = "Dark2") +
-  geom_point() +
-  scale_x_continuous(breaks = c(1983, 2016)) +
+  scale_x_continuous(breaks = c(1989, 2016)) +
+  scale_y_continuous(breaks = c(0, 50000, 100000, 150000), 
+                     labels = scales::dollar) +
   guides(color = FALSE) +
-  theme_classic()
+  labs(title = '**Median Family Wealth by Race in 1989 and 2016**',
+       subtitle = '*Normalized to 2016 dollars*') +
+  theme_void() +
+  theme(plot.title = element_markdown(size = 16),
+        plot.subtitle = element_markdown(size = 12),
+        plot.title.position = "plot",
+        axis.text = element_markdown(size = 12),
+        axis.ticks = element_line(),
+        plot.background = element_rect(fill = "#F0F0F0", color = NA),
+        plot.margin = margin(t = 25, r = 25, b = 10, l = 25))
 
 ggplot(subset(race_wealth, 
               year >= 1983 &
