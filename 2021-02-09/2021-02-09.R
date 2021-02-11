@@ -36,7 +36,12 @@ ggplot(subset(income_distribution,
               race %in% c('Black Alone',
                           'White Alone, Not Hispanic',
                           'Hispanic (Any Race)') &
-                year %in% c(1983, 2019)),
+                year %in% c(1983, 2019)) %>%
+         mutate(race = case_when(
+           race == 'Black Alone' ~ 'Black',
+           race == 'Hispanic (Any Race)' ~ 'Hispanic',
+           TRUE ~ 'White'
+         )),
        aes(x = factor(income_bracket,
                       levels = c('Under $15,000',
                                  '$15,000 to $24,999',
@@ -76,15 +81,19 @@ ggplot(subset(income_distribution,
 
 
 ggplot(subset(race_wealth, 
-              year >= 1983 &
+              year %in% c(1983, 2016) &
               type == 'Median' &
               !is.na(wealth_family)),
        aes(x = year,
            y = wealth_family, # (median) family wealth, normalized to 2016 dollars
-           color = race)) +
+           color = factor(race, levels = c('Black', 'Hispanic', 'White', 'Non-White')))) +
   geom_line() +
+  geom_text(aes(label = race)) +
   scale_color_brewer(palette = "Dark2") +
-  geom_point()
+  geom_point() +
+  scale_x_continuous(breaks = c(1983, 2016)) +
+  guides(color = FALSE) +
+  theme_classic()
 
 ggplot(subset(race_wealth, 
               year >= 1983 &
