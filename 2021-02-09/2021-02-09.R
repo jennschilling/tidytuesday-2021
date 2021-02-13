@@ -4,10 +4,12 @@
 
 #### Libraries ####
 
-library(tidyverse)
-library(skimr)
-library(ggthemes)
-library(ggtext)
+library(tidyverse) 
+library(skimr) # view data summary
+library(ggthemes) # extra themes
+library(ggtext) # text formatting
+library(wesanderson) # color palettes
+library(patchwork) # put plots together 
 
 #### Get the Data ####
 
@@ -32,7 +34,7 @@ skim(income_distribution) # Starts in 1967, 8 racial groups
 
 ### Make Graphs ####
 
-ggplot(subset(income_distribution,
+income_hist <- ggplot(subset(income_distribution,
               race %in% c('Black Alone',
                           'White Alone, Not Hispanic',
                           'Hispanic (Any Race)') &
@@ -57,9 +59,10 @@ ggplot(subset(income_distribution,
   geom_col() +
   facet_grid(race ~ year,
              switch = "y") +
-  labs(title = '**Income Distribution by Race in 1989 and 2016**',
-       subtitle = '*Proportion of people by income bracket*<br>') +
-  scale_fill_brewer(palette = "Dark2") +
+  labs(title = '**Income Distribution**',
+       subtitle = '*proportion of people by race and income bracket*<br>') +
+#  scale_fill_brewer(palette = "Dark2") +
+  scale_fill_manual(values = wes_palette("Darjeeling1")) +
   guides(fill = FALSE,
          color = FALSE) +
   scale_x_discrete(labels = c('under<br>$15,000',
@@ -71,6 +74,10 @@ ggplot(subset(income_distribution,
                               '',
                               '',
                               'over<br>$200,000')) +
+ # scale_y_continuous(position = "right",
+ #                      breaks = c(0, 25),
+ #                      limits = c(0, 31),
+ #                      labels = scales::percent_format(scale = 1)) +
   theme_void() +
   theme(plot.title = element_markdown(size = 16),
         plot.subtitle = element_markdown(size = 12),
@@ -81,81 +88,125 @@ ggplot(subset(income_distribution,
                                              size = 12,
                                              face = 'bold'),
         strip.text.x = element_markdown(vjust = 1, 
-                                        size = 14,
+                                        size = 12,
                                         face = 'bold'),
         axis.text.x = element_markdown(size = 8),
         plot.background = element_rect(fill = "#F0F0F0", color = NA),
         plot.margin = margin(t = 25, r = 25, b = 10, l = 25))
 
 
-# NEed to fix jagged line
-
-ggplot(subset(race_wealth, 
+avg_wealth <- ggplot(subset(race_wealth, 
               year %in% c(1989, 2016) &
-              type == 'Median' &
-              race != 'Non-White'),
-       aes(x = year,
-           y = wealth_family, # (median) family wealth, normalized to 2016 dollars
-           color = factor(race, levels = c('Black', 'Hispanic', 'White', 'Non-White')))) +
-  geom_line(size = 1) +
-  geom_point(size = 2) +
-  scale_color_brewer(palette = "Dark2") +
-  scale_x_continuous(breaks = c(1989, 2016)) +
-  scale_y_continuous(breaks = c(0, 50000, 100000, 150000), 
-                     labels = scales::dollar) +
-  guides(color = FALSE) +
-  labs(title = '**Median Family Wealth by Race in 1989 and 2016**',
-       subtitle = '*Normalized to 2016 dollars*') +
-  theme_void() +
-  theme(plot.title = element_markdown(size = 16),
-        plot.subtitle = element_markdown(size = 12),
-        plot.title.position = "plot",
-        axis.text = element_markdown(size = 12),
-        axis.ticks = element_line(),
-        plot.background = element_rect(fill = "#F0F0F0", color = NA),
-        plot.margin = margin(t = 25, r = 25, b = 10, l = 25))
-
-ggplot(subset(race_wealth, 
-              year >= 1983 &
                 type == 'Average' &
                 !is.na(wealth_family)),
        aes(x = year,
            y = wealth_family, # (average) family wealth, normalized to 2016 dollars
            color = race)) +
-  geom_line() +
-  scale_color_brewer(palette = "Dark2") +
-  geom_point()
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  #  scale_color_brewer(palette = "Dark2") + 
+  scale_color_manual(values = wes_palette("Darjeeling1")) +
+  scale_x_continuous(breaks = c(1989, 2016)) +
+  scale_y_continuous(breaks = c(250000, 500000, 750000), 
+                     labels = scales::dollar) +
+  guides(color = FALSE) +
+  labs(title = '**Family Wealth**',
+       subtitle = '*average wealth; normalized to 2016 $*') +
+  theme_void() +
+  theme(plot.title = element_markdown(size = 10),
+        plot.subtitle = element_markdown(size = 8),
+        plot.title.position = "plot",
+        axis.text = element_markdown(size = 7),
+        axis.ticks.y = element_line(),
+        axis.ticks.length.y = unit(.1, "cm"),
+        plot.background = element_rect(fill = "#F0F0F0", color = NA),
+        plot.margin = margin(t = 25, r = 25, b = 10, l = 25))
 
 
-ggplot(subset(home_owner),
+home <- ggplot(subset(home_owner,
+              year %in% c(1989, 2016)),
        aes(x = year,
-           y = home_owner_pct, # homeownership percentage
+           y = home_owner_pct, # home ownership percentage
            color = race)) +
-  geom_line() +
-  scale_color_brewer(palette = "Dark2") +
-  geom_point()
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  #  scale_color_brewer(palette = "Dark2") + 
+  scale_color_manual(values = wes_palette("Darjeeling1")) +
+  scale_x_continuous(breaks = c(1989, 2016)) +
+  scale_y_continuous(limits = c(0.38, 0.72),
+                     breaks = c(0.40,  0.5, 0.60, 0.70), 
+                     labels = scales::percent) +
+  guides(color = FALSE) +
+  labs(title = '**Home Ownership**',
+       subtitle = '*percent of people by race who own a home*') +
+  theme_void() +
+  theme(plot.title = element_markdown(size = 10),
+        plot.subtitle = element_markdown(size = 8),
+        plot.title.position = "plot",
+        axis.text = element_markdown(size = 7),
+        axis.ticks.y = element_line(),
+        axis.ticks.length.y = unit(.1, "cm"),
+        plot.background = element_rect(fill = "#F0F0F0", color = NA),
+        plot.margin = margin(t = 25, r = 25, b = 10, l = 25))
 
 
-ggplot(subset(retirement),
+retire <- ggplot(subset(retirement,
+              year %in% c(1989, 2016)),
        aes(x = year,
            y = retirement, # average family liquid retirement savings, normalized to 2016 dollars
            color = race)) +
-  geom_line() +
-  scale_color_brewer(palette = "Dark2") +
-  geom_point()
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  #  scale_color_brewer(palette = "Dark2") + 
+  scale_color_manual(values = wes_palette("Darjeeling1")) +
+  scale_x_continuous(breaks = c(1989, 2016)) +
+  scale_y_continuous(limits = c(0, 165000),
+                     breaks = c(0, 40000, 80000, 120000, 160000), 
+                     labels = scales::dollar) +
+  guides(color = FALSE) +
+  labs(title = '**Family Liquid Retirement Savings**',
+       subtitle = '*average savings; normalized to 2016 $*') +
+  theme_void() +
+  theme(plot.title = element_markdown(size = 10),
+        plot.subtitle = element_markdown(size = 8),
+        plot.title.position = "plot",
+        axis.text = element_markdown(size = 7),
+        axis.ticks.y = element_line(),
+        axis.ticks.length.y = unit(.1, "cm"),
+        plot.background = element_rect(fill = "#F0F0F0", color = NA),
+        plot.margin = margin(t = 25, r = 25, b = 10, l = 25))
 
-ggplot(subset(student_debt),
-       aes(x = year,
-           y = loan_debt_pct, # percent of families with student loan debt
-           color = race)) +
-  geom_line() +
-  scale_color_brewer(palette = "Dark2") +
-  geom_point()
-
-ggplot(subset(student_debt),
+amount_student <- ggplot(subset(student_debt,
+              year %in% c(1989, 2016)),
        aes(x = year,
            y = loan_debt, # average family student loan debt for aged 25-55, normalized to 2016 dollars
            color = race)) +
-  geom_line() +
-  scale_color_brewer(palette = "Dark2") +
-  geom_point()
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  #  scale_color_brewer(palette = "Dark2") + 
+  scale_color_manual(values = wes_palette("Darjeeling1")) +
+  scale_x_continuous(breaks = c(1989, 2016)) +
+  scale_y_continuous(limits = c(0, 17000),
+                     breaks = c(0, 5000, 10000, 15000), 
+                     labels = scales::dollar) +
+  guides(color = FALSE) +
+  labs(title = '**Family Student Loan Debt**',
+       subtitle = '*average debt; normalized to 2016 $*') +
+  theme_void() +
+  theme(plot.title = element_markdown(size = 10),
+        plot.subtitle = element_markdown(size = 8),
+        plot.title.position = "plot",
+        axis.text = element_markdown(size = 7),
+        axis.ticks.y = element_line(),
+        axis.ticks.length.y = unit(.1, "cm"),
+        plot.background = element_rect(fill = "#F0F0F0", color = NA),
+        plot.margin = margin(t = 25, r = 25, b = 10, l = 25))
+
+final_plot <- (home | avg_wealth | retire | amount_student) / income_hist 
+
+ggsave("2021-02-09\\wealth_distribution.png",
+       plot = final_plot,
+       device = "png",
+       width = 12,
+       height = 7,
+       dpi = 300)
