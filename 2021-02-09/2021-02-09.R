@@ -57,7 +57,7 @@ income_hist <- ggplot(subset(income_distribution,
            y = income_distribution,
            fill = race)) +
   geom_col() +
-  facet_grid(race ~ year,
+  facet_grid(factor(race, levels = c("White", "Hispanic", "Black")) ~ year,
              switch = "y") +
   labs(title = '**Income Distribution**',
        subtitle = '*proportion of people by race and income bracket*<br>') +
@@ -66,33 +66,27 @@ income_hist <- ggplot(subset(income_distribution,
   guides(fill = FALSE,
          color = FALSE) +
   scale_x_discrete(labels = c('under<br>$15,000',
-                              '',
-                              '',
-                              '',
-                              '',
-                              '',
-                              '',
-                              '',
+                              '', '', '', '', '', '', '',
                               'over<br>$200,000')) +
  # scale_y_continuous(position = "right",
  #                      breaks = c(0, 25),
  #                      limits = c(0, 31),
  #                      labels = scales::percent_format(scale = 1)) +
   theme_void() +
-  theme(plot.title = element_markdown(size = 16),
-        plot.subtitle = element_markdown(size = 12),
+  theme(plot.title = element_markdown(size = 12),
+        plot.subtitle = element_markdown(size = 10),
         plot.title.position = "plot",
         strip.text.y.left = element_markdown(angle = 0, 
                                              vjust = 1, 
                                              hjust = 1,
-                                             size = 12,
+                                             size = 10,
                                              face = 'bold'),
         strip.text.x = element_markdown(vjust = 1, 
-                                        size = 12,
+                                        size = 10,
                                         face = 'bold'),
         axis.text.x = element_markdown(size = 8),
         plot.background = element_rect(fill = "#F0F0F0", color = NA),
-        plot.margin = margin(t = 25, r = 25, b = 10, l = 25))
+        plot.margin = margin(t = 10, r = 25, b = 10, l = 25))
 
 
 avg_wealth <- ggplot(subset(race_wealth, 
@@ -107,7 +101,8 @@ avg_wealth <- ggplot(subset(race_wealth,
   #  scale_color_brewer(palette = "Dark2") + 
   scale_color_manual(values = wes_palette("Darjeeling1")) +
   scale_x_continuous(breaks = c(1989, 2016)) +
-  scale_y_continuous(breaks = c(250000, 500000, 750000), 
+  scale_y_continuous(limits = c(0, 920000),
+                     breaks = c(0, 300000, 600000, 900000), 
                      labels = scales::dollar) +
   guides(color = FALSE) +
   labs(title = '**Family Wealth**',
@@ -161,7 +156,7 @@ retire <- ggplot(subset(retirement,
   scale_color_manual(values = wes_palette("Darjeeling1")) +
   scale_x_continuous(breaks = c(1989, 2016)) +
   scale_y_continuous(limits = c(0, 165000),
-                     breaks = c(0, 40000, 80000, 120000, 160000), 
+                     breaks = c(0, 50000, 100000, 150000), 
                      labels = scales::dollar) +
   guides(color = FALSE) +
   labs(title = '**Family Liquid Retirement Savings**',
@@ -202,7 +197,18 @@ amount_student <- ggplot(subset(student_debt,
         plot.background = element_rect(fill = "#F0F0F0", color = NA),
         plot.margin = margin(t = 25, r = 25, b = 10, l = 25))
 
-final_plot <- (home | avg_wealth | retire | amount_student) / income_hist 
+final_plot <- income_hist / (home | avg_wealth | retire | amount_student) 
+
+final_plot <- final_plot + plot_annotation(
+  title = '**Wealth Inequality in the United States**',
+  caption = '#TidyTuesday 09 Feb 2021 | Data: Urban Institute & U.S. Census | Viz: @datasciencejenn',
+  theme = theme(plot.title = element_markdown(size = 16),
+                plot.caption = element_markdown(size = 10),
+                plot.background = element_rect(fill = "#F0F0F0", color = NA),
+                plot.title.position = "plot",
+                plot.caption.position = "plot")
+)
+  
 
 ggsave("2021-02-09\\wealth_distribution.png",
        plot = final_plot,
