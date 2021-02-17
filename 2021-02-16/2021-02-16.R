@@ -22,6 +22,14 @@ georgia_pop_long <- georgia_pop %>%
 ggplot(georgia_pop_long,
        aes(x = percent,
            y = year,
-           group = race)) +
-  geom_path()
+           linetype = race)) +
+  geom_path() +
+  scale_x_reverse() +
+  labs(title = "COMPARATIVE INCREASE OF WHITE AND COLORED POPULATION OF GEORGIA.",
+       x = "",
+       y = "",
+       linetype = "") +
+  theme(legend.position = "bottom",
+        plot.background = element_rect(fill = "#DFD6C7", color = NA),
+        panel.background = element_rect(fill = "#DFD6C7", color = NA))
 
