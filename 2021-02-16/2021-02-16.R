@@ -18,8 +18,8 @@ axis_font <- "Microsoft Sans Serif" # Alternate: "Gill Sans MT"
 
 #### Colors ####
 
-background <- "antiquewhite2"
-grid_line <- "#cc7f7f"
+background <- "#E9D1B4"
+grid_line <- "#EFBEA3" #"#cc7f7f"
 font_color <- "gray50"
 
 #### Challenge 1 ####
