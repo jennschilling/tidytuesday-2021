@@ -3,7 +3,7 @@
 Data visualizations developed in R using data from [#TidyTuesday 2021](https://github.com/rfordatascience/tidytuesday/tree/master/data/2021).
 
 # 16 Feburary 2021
-<img src="https://github.com/jennschilling/tidytuesday-2021/raw/main/2021-02-16/c1_final.png", height="24")
+<img src="https://github.com/jennschilling/tidytuesday-2021/raw/main/2021-02-16/c1_final.png", height="24">
 
 # 09 February 2021
 ![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-02-09/wealth_distribution.png)
