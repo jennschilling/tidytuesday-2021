@@ -9,6 +9,7 @@ library(extrafont)
 library(pBrackets)
 library(grid)
 library(ggforce)
+library(patchwork)
 
 #### Fonts ####
 
@@ -137,6 +138,7 @@ ggsave("2021-02-16\\c1_final.png",
 
 background <- "#e5d4c3"
 font_color <- "#3B3326"
+label_color <- "gray40"
 
 widow_divorce <- "#4b6350"
 married <- "#f3b21a"
@@ -163,6 +165,9 @@ conjugal_long <- conjugal %>%
   mutate(population = toupper(population)) %>%
   mutate(population = factor(population,
                              levels = c("NEGROES", "GERMANY"))) %>%
+  mutate(age = toupper(age),
+         age = ifelse(age == "60 AND OVER",
+                      "60\nAND\nOVER", age)) %>%
   mutate(label = ifelse(percent == 0.6, 
                         paste0(".6", "\n", "%"),
                         paste0(percent, "%")),
@@ -175,7 +180,9 @@ conjugal_long <- conjugal %>%
 
 # Plot
 
-ggplot(data = conjugal_long,
+# Main Plot
+c2 <- 
+  ggplot(data = conjugal_long,
        mapping = aes(x = percent,
                      y = population,
                      fill = conjugal_category)) +
@@ -184,42 +191,70 @@ ggplot(data = conjugal_long,
            color = font_color,
            key_glyph = draw_key_point) +
   
-  coord_cartesian(clip = "off") +
+  coord_cartesian(clip = "off", expand = FALSE) +
   
   facet_wrap(~ age,
-             ncol = 1) +
+             ncol = 1,
+             strip.position = "left") +
   
-  geom_text(mapping = aes(x = label_x, label = label),
+  geom_text(data = conjugal_long,
+            mapping = aes(x = label_x, label = label),
             family = axis_font,
             color = font_color,
             size = 3.5) +
   
   scale_fill_manual(values = conjugal_colors) +
   
-  guides(fill = guide_legend(override.aes = list(shape = 21, size = 10))) +
+  guides(fill = FALSE) +
 
-  labs(title = "CONJUGAL CONDITION.\n\n",
-       fill = "",
-       x = "",
+  labs(x = "",
        y = "") +
+  
+  geom_text(data = tibble(x = c(0, 0, 0),
+                          y = c(0.7, 0.7, 0.7),
+                          age = c("15-40", "40-60", "60\nAND\nOVER"),
+                          lab = c("15-40           ", "40-60           ", "60 AND OVER"),
+                          conjugal_category = c("WIDOWED AND DIVORCED",
+                                                "MARRIED",
+                                                "SINGLE")),
+            mapping = aes(x = x, y = y, label = lab),
+            family = axis_font,
+            color = label_color,
+            size = 2.5,
+            hjust = 1.15) +
+  
+  geom_text(data = tibble(x = c(0, 0, 0),
+                          y = c(2, 0.7, 0.7),
+                          age = c("15-40", "40-60", "60\nAND\nOVER"),
+                          lab = c("AGE", "", ""),
+                          conjugal_category = c("WIDOWED AND DIVORCED",
+                                                "MARRIED",
+                                                "SINGLE")),
+            mapping = aes(x = x, y = y, label = lab),
+            family = axis_font,
+            color = label_color,
+            size = 4,
+            hjust = 4.75) +
     
-  theme(legend.background = element_rect(fill = background, color = NA),
-        legend.key = element_rect(fill = background, color = NA),
-        #legend.key.width = unit(2, unit = "cm"),
-        legend.text = element_text(size = 11, color = font_color),
-        legend.position = "top",
-        
-        axis.ticks = element_blank(),
+  theme(axis.ticks = element_blank(),
         
         axis.text.x = element_blank(),
         axis.text.y = element_text(family = axis_font, 
-                                   color = font_color,
-                                   size = 11,
-                                   margin = margin(r = -10)),
+                                   color = label_color,
+                                   size = 11),
         
-        strip.text = element_blank(),
+        strip.text.y.left = element_text(family = axis_font,
+                                         color = label_color,
+                                         size = 11,
+                                         angle = 0),
         
-        panel.spacing.y = unit(1, "cm"),
+        strip.placement = "outside",
+        
+        strip.switch.pad.wrap = unit(0.75, "cm"),
+        
+        strip.background = element_blank(),
+        
+        panel.spacing.y = unit(2.5, "cm"),
         
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -227,16 +262,48 @@ ggplot(data = conjugal_long,
         plot.background = element_rect(fill =  background, color = NA),
         panel.background = element_rect(fill = background, color = NA),
         
-        plot.margin = margin(t = 10, r = 25, b = 10, l = 25),
-        
-        plot.title = element_text(family = title_font, size = 16,
-                                  face = "bold", hjust = 0.5),
+        plot.margin = margin(t = 10, r = 30, b = 40, l = 20),
         
         plot.title.position = "plot")
 
-# May need to make title and legend separately
-# Need to add the brackets and ages
-# Need to add small age label under "Negroes"
+
+# Title and Legend
+c2_annotations <- ggplot() +
+  annotate("point", x = c(0, 0, 0.2), y = c(0.1, -0.1, 0), 
+           shape = 21, size = 12, fill = c(single, married, widow_divorce), 
+           color = font_color) +
+  annotate("text", x = c(0.032, 0.034, 0.27), y = c(0.1, -0.1, 0),
+           label = c("SINGLE", "MARRIED", "WIDOWED AND DIVORCED"), 
+           family = axis_font, color = label_color) +
+  scale_x_continuous(limits = c(0, 0.33)) +
+  scale_y_continuous(limits = c(-0.2, 0.2)) +
+  coord_cartesian(clip = "off", expand = FALSE) +
+  labs(title = "CONJUGAL CONDITION.") +
+  theme_void() +
+  theme(plot.margin = margin(t = 10, r = 200, b = 20, l = 200),
+        plot.title = element_text(family = title_font, size = 20,
+                                 face = "bold", hjust = 0.5,
+                                 margin = margin(t = 0, r = 0, b = 30, l = 0)),
+        plot.background = element_rect(fill =  background, color = NA))
+
+# Brackets
+
+b1 <- bracketsGrob(-0.11, 1, -0.11, 0, h = -0.3, lwd = 1, 
+                  col = label_color)
+
+
+c2_brackets <- c2 +
+  annotation_custom(b1) 
+
+c2_final <- (c2_annotations / c2_brackets) +
+  plot_layout(heights = c(1, 4)) +
+  plot_annotation(caption = "Source: W.E.B. Du Bois' Data Portraits #DuBoisChallenge | Viz: Jenn Schilling") &
+  theme(plot.background = element_rect(fill =  background, color = NA),
+        plot.caption = element_text(family = axis_font, color = label_color, hjust = 1)) 
+
+# placement of text under "Negroes" is not quite right
+
+
 
 #### Challenge 7 ####
 
