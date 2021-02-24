@@ -178,4 +178,10 @@ ggplot(data = employed_industry_sub_20,
   annotate("text", x = 0.28, y = 1.5, label = "WHITE.", 
            family = axis_font, color = font_color, size = 3.5)
 
+ggsave("2021-02-23\\occupations_2020.png",
+       plot = last_plot(),
+       device = "png",
+       width = 8,
+       height = 7,
+       type = "cairo")
 
