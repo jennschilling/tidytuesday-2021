@@ -139,19 +139,20 @@ ggplot(data = employed_industry_sub_20,
                      group = race_gender)) +
   geom_col() +
   coord_polar(start = pi - (65*pi)/180) +
-  labs(title = "OCCUPATIONS OF BLACK AND WHITE PEOPLE IN THE UNITED STATES IN 2020.",
+  labs(title = "OCCUPATIONS OF BLACK AND WHITE PEOPLE IN THE UNITED STATES IN 2020.\n",
        x = "",
        y = "",
        fill = "",
        caption = "Source: U.S. Bureau of Labor Statistics | Viz: Jenn Schilling") +
   scale_fill_manual(values = pal) +
+  guides(fill = guide_legend(ncol = 2)) +
   theme(legend.background = element_rect(fill = background, color = NA),
         legend.key = element_rect(fill = background, color = NA),
         legend.text = element_text(family = axis_font, 
-                                   size = 8,
+                                   size = 7,
                                    color = font_color),
 
-        legend.position = "right",
+        legend.position = "bottom",
         
         axis.ticks = element_blank(),
         axis.text = element_blank(),
@@ -162,12 +163,12 @@ ggplot(data = employed_industry_sub_20,
         plot.background = element_rect(fill =  background, color = NA),
         panel.background = element_rect(fill = background, color = NA),
         
-        plot.margin = margin(t = 10, r = 15, b = 10, l = 15),
+        plot.margin = margin(t = 10, r = 20, b = 10, l = 20),
         
-        plot.title = element_text(family = title_font, size = 12,
+        plot.title = element_text(family = title_font, size = 11,
                                   face = "bold", hjust = 0.5),
         
-        plot.caption = element_text(family = axis_font, color = font_color),
+        plot.caption = element_text(family = axis_font, color = font_color, size = 7),
         
         plot.title.position = "plot",
         plot.caption.position = "plot"
@@ -181,7 +182,7 @@ ggplot(data = employed_industry_sub_20,
 ggsave("2021-02-23\\occupations_2020.png",
        plot = last_plot(),
        device = "png",
-       width = 8,
+       width = 7,
        height = 7,
        type = "cairo")
 
