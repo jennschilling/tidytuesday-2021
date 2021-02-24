@@ -143,7 +143,7 @@ ggplot(data = employed_industry_sub_20,
        x = "",
        y = "",
        fill = "",
-       caption = "Source: U.S. Bureau of Labor Satistics | Viz: Jenn Schilling") +
+       caption = "Source: U.S. Bureau of Labor Statistics | Viz: Jenn Schilling") +
   scale_fill_manual(values = pal) +
   theme(legend.background = element_rect(fill = background, color = NA),
         legend.key = element_rect(fill = background, color = NA),
