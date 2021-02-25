@@ -22,6 +22,8 @@ background <- "#f0e4d8"
 font_color <- "gray50"
 pal <- c("#db2a41", "#5b688a", "#f8c211", "#ac9077", "#e9ddce",
          "#f0e4d8") # extra blocks to separate bars
+pal_outline <- c("gray50", "gray50", "gray50", "gray50", "gray50",
+                 "#f0e4d8")
 
 #### Data ####
 
@@ -129,6 +131,8 @@ employed_industry_sub_20 <- employed_industry_sub %>%
                              "TRADE AND TRANSPORTATION",
                              "")))
 
+employed_industry_sub_20_labs <- employed_industry_sub_20
+
 
 #### Plot ####
 
@@ -156,7 +160,10 @@ ggplot(data = employed_industry_sub_20,
   scale_color_manual(values = pal) +
   
   guides(fill = FALSE,
-         color = guide_legend(ncol = 2, override.aes = list(size = 5))) +
+         color = guide_legend(ncol = 2, override.aes = list(size = 6,
+                                                            fill = pal,
+                                                            color = pal_outline,
+                                                            shape = 21))) +
   
   theme(legend.background = element_rect(fill = background, color = NA),
         legend.key = element_blank(),
