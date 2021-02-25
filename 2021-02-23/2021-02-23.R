@@ -7,10 +7,14 @@
 library(tidyverse)
 library(extrafont)
 library(skimr)
+library(ggthemes)
+library(ggtext)
+library(sysfonts)
+library(showtext)
 
 #### Fonts ####
 
-#font_add_google("Lato") <- use with sysfonts library
+font_add_google("Lato") # use with sysfonts library
 
 title_font <- "Consolas"
 axis_font <- "Microsoft Sans Serif"
@@ -45,13 +49,13 @@ skim(earn)
 
 table(earn$race, earn$ethnic_origin)
 
-#### Data Processing ####
+#### Employment Data Processing ####
 
 # Goal is to recreate: https://raw.githubusercontent.com/ajstarks/dubois-data-portraits/master/challenge/challenge03/original-plate-27.jpg
 
 employed_industry <- employed %>%
   mutate(industry = str_replace_all(industry, "[\r]" , ""),
-         industry = str_replace_all(industry, "[\n]" , " ")) %>%
+         industry = str_replace_all(industry, "[\n]" , " ")) %>% # make Mining industry label consistent
   group_by(year, industry, race_gender) %>%
   summarise(employ_n = sum(employ_n),
             .groups = "keep") %>%
@@ -89,6 +93,7 @@ classification <- tibble(
                "Wholesale and retail trade"
                ))
 
+# Subset of employment data; add Du Bois classification
 employed_industry_sub <- employed_industry %>%
   filter(race_gender %in% c('White', 'Black or African American')) %>%
   # Remove sub-industries that are included in other industries
@@ -109,12 +114,13 @@ employed_industry_sub <- employed_industry %>%
   mutate(dubois = toupper(dubois),
          race_gender = toupper(race_gender))
 
+# Plot Data
 employed_industry_sub_20 <- employed_industry_sub %>%
   ungroup() %>%
   filter(year == 2020) %>%
   # From: https://github.com/winterstat/tidytuesday/blob/master/R/tt2021_wk8.R
   mutate(pct_label = pct,
-         pct = (pct * 61)/ 100) %>% 
+         pct = (pct * 61)/ 100) %>% # Make circular plot points
   add_row(year = 2020,
           race_gender = "BLACK OR AFRICAN AMERICAN",
           dubois = "",
@@ -134,6 +140,7 @@ employed_industry_sub_20 <- employed_industry_sub %>%
                          ordered = T)) %>%
   arrange(race_gender, dubois)
 
+# Labeling the plot
 employed_industry_sub_20_labs <- employed_industry_sub_20 %>%
   filter(!is.na(employ_n)) %>%
   mutate(pct_label = scales::percent(pct_label, accuracy = 0.1)) %>%
@@ -184,7 +191,7 @@ employed_industry_sub_20_labs <- employed_industry_sub_20 %>%
       TRUE ~ 0 ))
 
 
-#### Plot ####
+#### Employment Plot ####
 
 ggplot(data = employed_industry_sub_20,
        mapping = aes(y = "",
@@ -251,6 +258,7 @@ ggplot(data = employed_industry_sub_20,
         plot.caption.position = "plot"
         
   ) +
+  
   annotate("text", x = 1.1, y = 1.6, label = "BLACK.", 
            family = axis_font, color = font_color, size = 3.5) +
   
@@ -264,3 +272,58 @@ ggsave("2021-02-23\\occupations_2020.png",
        height = 7,
        type = "cairo")
 
+
+
+#### Earnings Data Plot ####
+
+earn_sub <- earn %>%
+  filter(sex %in% c('Men', 'Women') &
+           race %in% c('Black or African American', 'White') &
+           age %in% c('16 to 24 years', '25 to 54 years', '55 years and over')) %>%
+  mutate(year_quarter = paste(year, quarter, sep = "_"))
+
+showtext_auto()
+
+ggplot(data = earn_sub,
+       mapping = aes(x = year_quarter,
+                     y = median_weekly_earn,
+                     color = race,
+                     group = race)) +
+  geom_line() +
+  scale_x_discrete(breaks = c("2010_2", "2012_2", "2014_2", 
+                              "2016_2", "2018_2", "2020_2"),
+                   labels = c("2010", "2012", "2014",
+                              "2016", "2018", "2020")) +
+  scale_y_continuous(labels = scales::dollar,
+                     position = "right") +
+  scale_color_manual(values = c("#1b9e77", "#7570b3")) +
+  facet_grid(age~sex,
+             switch = "y") +
+  labs(title = "Weekly Median Earnings (2010-2020)",
+       subtitle = 'Men consistently outearn women. 
+       <b style="color:#1b9e77">Black</b> people earn less than <b style="color:#7570b3">white</b> people',
+       x = "",
+       y = "",
+       color = "",
+       caption = "Source: U.S. Bureau of Labor Statistics | Viz: Jenn Schilling") +
+  guides(color = FALSE) +
+#  theme_few() +
+  theme_fivethirtyeight() +  
+  theme(text = element_text(family = "Lato", size = 20),
+        
+        plot.title = element_markdown(),
+        plot.subtitle = element_markdown(),
+      
+        plot.title.position = "plot",
+        plot.caption.position = "plot",
+        
+        strip.text.y.left = element_text(angle = 0,
+                                         vjust = 1,
+                                         hjust = 1))
+
+ggsave("2021-02-23\\earnings_age_2020.png",
+       plot = last_plot(),
+       device = "png",
+       width = 5,
+       height = 5,
+       type = "cairo")
