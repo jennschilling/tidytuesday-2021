@@ -135,6 +135,7 @@ employed_industry_sub_20 <- employed_industry_sub %>%
   arrange(race_gender, dubois)
 
 employed_industry_sub_20_labs <- employed_industry_sub_20 %>%
+  filter(!is.na(employ_n)) %>%
   mutate(pct_label = scales::percent(pct_label, accuracy = 0.1)) %>%
   mutate(
     x = case_when(
