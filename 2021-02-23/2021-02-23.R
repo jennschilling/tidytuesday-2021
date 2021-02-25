@@ -205,7 +205,7 @@ ggplot(data = employed_industry_sub_20,
   
   coord_polar(start = pi - (65*pi)/180) +
   
-  labs(title = "OCCUPATIONS OF BLACK AND WHITE PEOPLE IN THE UNITED STATES IN 2020.\n",
+  labs(title = "OCCUPATIONS OF BLACK AND WHITE PEOPLE\nIN THE UNITED STATES IN 2020.\n",
        x = "",
        y = "",
        color = "",
@@ -238,7 +238,7 @@ ggplot(data = employed_industry_sub_20,
         plot.background = element_rect(fill =  background, color = NA),
         panel.background = element_rect(fill = background, color = NA),
         
-        plot.margin = margin(t = 10, r = 20, b = 10, l = 20),
+        plot.margin = margin(t = 10, r = 5, b = 10, l = 5),
         
         plot.title = element_text(family = title_font, size = 11,
                                   face = "bold", hjust = 0.5),
