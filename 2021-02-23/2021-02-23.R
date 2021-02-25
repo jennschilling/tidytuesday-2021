@@ -201,7 +201,8 @@ ggplot(data = employed_industry_sub_20,
                           y = y,
                           label = pct_label),
             color = label_color,
-            size = 2.5) +
+            size = 2.5,
+            family = axis_font) +
   
   coord_polar(start = pi - (65*pi)/180) +
   
