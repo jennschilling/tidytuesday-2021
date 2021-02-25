@@ -19,7 +19,7 @@ axis_font <- "Microsoft Sans Serif"
 
 background <- "#f0e4d8"
 font_color <- "gray50"
-pal <- c("#db2a41", "#5b688a", "#f8c211", "#ac9077", "#e9ddce",
+pal <- c("#db2a41", "#f8c211", "#5b688a", "#e9ddce", "#ac9077", 
          "#f0e4d8") # extra blocks to separate bars
 pal_outline <- c("gray50", "gray50", "gray50", "gray50", "gray50",
                  "#f0e4d8")
@@ -124,11 +124,13 @@ employed_industry_sub_20 <- employed_industry_sub %>%
   mutate(dubois = factor(dubois,
                          levels = 
                            c("AGRICULTURE, FISHERIES AND MINING",
-                             "MANUFACTURING AND MECHANICAL INDUSTRIES",
                              "DOMESTIC AND PERSONAL SERVICE",
-                             "PROFESSIONS",
+                             "MANUFACTURING AND MECHANICAL INDUSTRIES",
                              "TRADE AND TRANSPORTATION",
-                             "")))
+                             "PROFESSIONS",
+                             ""),
+                         ordered = T)) %>%
+  arrange(race_gender, dubois)
 
 employed_industry_sub_20_labs <- employed_industry_sub_20 %>%
   filter(!is.na(employ_n)) %>%
@@ -153,7 +155,7 @@ ggplot(data = employed_industry_sub_20,
                      color = dubois,
                      group = race_gender)) +
   
-  geom_point() +
+  geom_point() + # to get circles in the legend
   
   geom_col(show.legend = FALSE) +
   
@@ -174,7 +176,7 @@ ggplot(data = employed_industry_sub_20,
   scale_fill_manual(values = pal) +
   
   scale_color_manual(values = pal) +
-  
+
   guides(fill = FALSE,
          color = guide_legend(ncol = 2, override.aes = list(size = 6,
                                                             fill = pal,
