@@ -136,18 +136,30 @@ ggplot(data = employed_industry_sub_20,
        mapping = aes(y = "",
                      x = pct,
                      fill = dubois,
+                     color = dubois,
                      group = race_gender)) +
-  geom_col() +
+  
+  geom_point() +
+  
+  geom_col(show.legend = FALSE) +
+  
   coord_polar(start = pi - (65*pi)/180) +
+  
   labs(title = "OCCUPATIONS OF BLACK AND WHITE PEOPLE IN THE UNITED STATES IN 2020.\n",
        x = "",
        y = "",
-       fill = "",
+       color = "",
        caption = "Source: U.S. Bureau of Labor Statistics | Viz: Jenn Schilling") +
+  
   scale_fill_manual(values = pal) +
-  guides(fill = guide_legend(ncol = 2)) +
+  
+  scale_color_manual(values = pal) +
+  
+  guides(fill = FALSE,
+         color = guide_legend(ncol = 2, override.aes = list(size = 5))) +
+  
   theme(legend.background = element_rect(fill = background, color = NA),
-        legend.key = element_rect(fill = background, color = NA),
+        legend.key = element_blank(),
         legend.text = element_text(family = axis_font, 
                                    size = 7,
                                    color = font_color),
