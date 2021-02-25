@@ -19,6 +19,7 @@ axis_font <- "Microsoft Sans Serif"
 
 background <- "#f0e4d8"
 font_color <- "gray50"
+label_color <- "gray10"
 pal <- c("#db2a41", "#f8c211", "#5b688a", "#e9ddce", "#ac9077", 
          "#f0e4d8") # extra blocks to separate bars
 pal_outline <- c("gray50", "gray50", "gray50", "gray50", "gray50",
@@ -112,7 +113,8 @@ employed_industry_sub_20 <- employed_industry_sub %>%
   ungroup() %>%
   filter(year == 2020) %>%
   # From: https://github.com/winterstat/tidytuesday/blob/master/R/tt2021_wk8.R
-  mutate(pct = (pct * 61)/ 100) %>% 
+  mutate(pct_label = pct,
+         pct = (pct * 61)/ 100) %>% 
   add_row(year = 2020,
           race_gender = "BLACK OR AFRICAN AMERICAN",
           dubois = "",
@@ -133,16 +135,51 @@ employed_industry_sub_20 <- employed_industry_sub %>%
   arrange(race_gender, dubois)
 
 employed_industry_sub_20_labs <- employed_industry_sub_20 %>%
-  filter(!is.na(employ_n)) %>%
-  mutate(pct = scales::percent(pct, accuracy = 0.1)) %>%
+  mutate(pct_label = scales::percent(pct_label, accuracy = 0.1)) %>%
   mutate(
     x = case_when(
       race_gender == "BLACK OR AFRICAN AMERICAN" &
         dubois == "AGRICULTURE, FISHERIES AND MINING" ~ 0.8,
+      race_gender == "BLACK OR AFRICAN AMERICAN" &
+        dubois == "DOMESTIC AND PERSONAL SERVICE" ~ 0.85,
+      race_gender == "BLACK OR AFRICAN AMERICAN" &
+        dubois == "MANUFACTURING AND MECHANICAL INDUSTRIES" ~ 0.92,
+      race_gender == "BLACK OR AFRICAN AMERICAN" &
+        dubois == "TRADE AND TRANSPORTATION" ~ 1.02,
+      race_gender == "BLACK OR AFRICAN AMERICAN" &
+        dubois == "PROFESSIONS" ~ 1.25,
+      race_gender == "WHITE" &
+        dubois == "AGRICULTURE, FISHERIES AND MINING" ~ 1.6,
+      race_gender == "WHITE" &
+        dubois == "DOMESTIC AND PERSONAL SERVICE" ~ 0.05,
+      race_gender == "WHITE" &
+        dubois == "MANUFACTURING AND MECHANICAL INDUSTRIES" ~ 0.15,
+      race_gender == "WHITE" &
+        dubois == "TRADE AND TRANSPORTATION" ~ 0.25,
+      race_gender == "WHITE" &
+        dubois == "PROFESSIONS" ~ 0.45,
       TRUE ~ 0 ),
     y = case_when(
       race_gender == "BLACK OR AFRICAN AMERICAN" &
-        dubois == "AGRICULTURE, FISHERIES AND MINING" ~ 1.4,
+        dubois == "AGRICULTURE, FISHERIES AND MINING" ~ 1.45,
+      race_gender == "BLACK OR AFRICAN AMERICAN" &
+        dubois == "DOMESTIC AND PERSONAL SERVICE" ~ 1.35,
+      race_gender == "BLACK OR AFRICAN AMERICAN" &
+        dubois == "MANUFACTURING AND MECHANICAL INDUSTRIES" ~ 1.35,
+      race_gender == "BLACK OR AFRICAN AMERICAN" &
+        dubois == "TRADE AND TRANSPORTATION" ~ 1.35,
+      race_gender == "BLACK OR AFRICAN AMERICAN" &
+        dubois == "PROFESSIONS" ~ 1.35,
+      race_gender == "WHITE" &
+        dubois == "AGRICULTURE, FISHERIES AND MINING" ~ 1.50,
+      race_gender == "WHITE" &
+        dubois == "DOMESTIC AND PERSONAL SERVICE" ~ 1.35,
+      race_gender == "WHITE" &
+        dubois == "MANUFACTURING AND MECHANICAL INDUSTRIES" ~ 1.35,
+      race_gender == "WHITE" &
+        dubois == "TRADE AND TRANSPORTATION" ~ 1.35,
+      race_gender == "WHITE" &
+        dubois == "PROFESSIONS" ~ 1.35,
       TRUE ~ 0 ))
 
 
@@ -162,8 +199,9 @@ ggplot(data = employed_industry_sub_20,
   geom_text(data = employed_industry_sub_20_labs,
             mapping = aes(x = x,
                           y = y,
-                          label = pct),
-            color = font_color) +
+                          label = pct_label),
+            color = label_color,
+            size = 2.5) +
   
   coord_polar(start = pi - (65*pi)/180) +
   
@@ -211,9 +249,10 @@ ggplot(data = employed_industry_sub_20,
         plot.caption.position = "plot"
         
   ) +
-  annotate("text", x = 1.1, y = 1.5, label = "BLACK.", 
+  annotate("text", x = 1.1, y = 1.6, label = "BLACK.", 
            family = axis_font, color = font_color, size = 3.5) +
-  annotate("text", x = 0.28, y = 1.5, label = "WHITE.", 
+  
+  annotate("text", x = 0.28, y = 1.6, label = "WHITE.", 
            family = axis_font, color = font_color, size = 3.5)
 
 ggsave("2021-02-23\\occupations_2020.png",
