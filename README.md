@@ -2,6 +2,10 @@
 
 Data visualizations developed in R using data from [#TidyTuesday 2021](https://github.com/rfordatascience/tidytuesday/tree/master/data/2021).
 
+# 24 February 2021
+In the style of Du Bois' 1900 "Occupations of Negores and Whites in Georgia"
+![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-02-23/occupations_2020.png?raw=true)
+
 # 16 Feburary 2021
 <img src="https://raw.githubusercontent.com/jennschilling/tidytuesday-2021/main/2021-02-16/c1_final.png" height="500"> <img src="https://raw.githubusercontent.com/jennschilling/tidytuesday-2021/main/2021-02-16/c2_final.png" height="500">
 
