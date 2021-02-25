@@ -6,7 +6,6 @@
 
 library(tidyverse)
 library(extrafont)
-library(patchwork)
 library(skimr)
 
 #### Fonts ####
@@ -131,7 +130,18 @@ employed_industry_sub_20 <- employed_industry_sub %>%
                              "TRADE AND TRANSPORTATION",
                              "")))
 
-employed_industry_sub_20_labs <- employed_industry_sub_20
+employed_industry_sub_20_labs <- employed_industry_sub_20 %>%
+  filter(!is.na(employ_n)) %>%
+  mutate(pct = scales::percent(pct, accuracy = 0.1)) %>%
+  mutate(
+    x = case_when(
+      race_gender == "BLACK OR AFRICAN AMERICAN" &
+        dubois == "AGRICULTURE, FISHERIES AND MINING" ~ 0.8,
+      TRUE ~ 0 ),
+    y = case_when(
+      race_gender == "BLACK OR AFRICAN AMERICAN" &
+        dubois == "AGRICULTURE, FISHERIES AND MINING" ~ 1.4,
+      TRUE ~ 0 ))
 
 
 #### Plot ####
@@ -146,6 +156,12 @@ ggplot(data = employed_industry_sub_20,
   geom_point() +
   
   geom_col(show.legend = FALSE) +
+  
+  geom_text(data = employed_industry_sub_20_labs,
+            mapping = aes(x = x,
+                          y = y,
+                          label = pct),
+            color = font_color) +
   
   coord_polar(start = pi - (65*pi)/180) +
   
