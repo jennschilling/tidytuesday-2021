@@ -1,5 +1,5 @@
 # Author : Jenn Schilling
-# Title: #TidyTuesday Superbowl Commercials
+# Title: #TidyTuesday Super Bowl Commercials
 # Date: Mar 2 2021
 
 #### Libraries ####
@@ -65,7 +65,7 @@ ggplot(data = youtube,
                   clip = "off") +
   guides(size = guide_legend(title.position = "top",
                              title.hjust = 0.5)) +
-  labs(title = "Superbowl Ads 2000-2020",
+  labs(title = "Super Bowl Ads 2000-2020",
        subtitle = "Number of Views vs. Number of Likes",
        x = "",
        y = "",
@@ -116,7 +116,7 @@ ggplot(data = youtube %>% filter(view_count < 170000000),
                   clip = "off") +
   guides(size = guide_legend(title.position = "top",
                              title.hjust = 0.5)) +
-  labs(title = "Superbowl Ads 2000-2020",
+  labs(title = "Super Bowl Ads 2000-2020",
        subtitle = "Number of Views vs. Number of Likes",
        x = "",
        y = "",
