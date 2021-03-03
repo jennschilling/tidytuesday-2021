@@ -2,6 +2,9 @@
 
 Data visualizations developed in R using data from [#TidyTuesday 2021](https://github.com/rfordatascience/tidytuesday/tree/master/data/2021).
 
+# 03 March 2021
+![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-03-02/superbowl_2.png)
+
 # 24 February 2021
 In the style of [Du Bois' 1900 "Occupations of Negroes and Whites in Georgia"](https://raw.githubusercontent.com/ajstarks/dubois-data-portraits/master/challenge/challenge03/original-plate-27.jpg)
 
