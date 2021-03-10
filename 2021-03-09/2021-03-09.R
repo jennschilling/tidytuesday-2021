@@ -60,7 +60,26 @@ ggplot(data = movies_pass_fail,
   geom_col()
 
 
+ggplot(data = movies,
+       mapping = aes(x = year,
+                     y = budget_2013,
+                     color = binary)) +
+  geom_point() 
 
+
+movies_pass_fail_yr <- movies %>%
+  group_by(year, binary) %>%
+  summarise(med_budget = median(budget_2013, na.rm = TRUE),
+            med_dom_gross = median(domgross_2013, na.rm = TRUE),
+            med_int_gross = median(intgross_2013, na.rm = TRUE),
+            med_rating = median(imdb_rating, na.rm = TRUE),
+            .groups = "drop")
+
+ggplot(data = movies_pass_fail_yr,
+       mapping = aes(x = year,
+                     y = med_rating,
+                     color = binary)) +
+  geom_line()
 
 #### Plot ####
 
