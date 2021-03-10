@@ -117,6 +117,7 @@ ggplot(data = movies_pass_fail_summary %>%
        title = "Financial Investment and Returns on Movies Bechdel Test",
        subtitle = "Movies released 2000 - 2013; $ normalized to 2013",
        color = "Bechdel Test") +
+  guides(color = guide_legend(title.position = "top", title.hjust = 0.5)) +
   theme(legend.position = "bottom")
 
 ggplot(data = movies_pass_fail_summary %>%
@@ -136,6 +137,7 @@ ggplot(data = movies_pass_fail_summary %>%
        title = "Financial Return on Investment by Bechdel Test",
        subtitle = "Movies released 2000 - 2013; $ normalized to 2013",
        color = "Bechdel Test") +
+  guides(color = guide_legend(title.position = "top", title.hjust = 0.5)) +
   theme(legend.position = "bottom")
 
 #### Plot ####
