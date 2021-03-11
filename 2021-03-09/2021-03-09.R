@@ -140,7 +140,62 @@ ggplot(data = movies_pass_fail_summary %>%
   guides(color = guide_legend(title.position = "top", title.hjust = 0.5)) +
   theme(legend.position = "bottom")
 
+# Maybe look at genres
+table(movies$genre)
+
 #### Plot ####
+
+movies_genre <- movies %>%
+  select(year, clean_test, binary, budget_2013, domgross_2013, intgross_2013,
+         imdb_rating, genre, imdb_id) %>%
+  separate(genre, 
+           into = c('genre1', 'genre2', 'genre3'), 
+           sep = ", ") %>%
+  pivot_longer(genre1:genre3, 
+               names_to = 'label', 
+               values_to = 'genre', 
+               values_drop_na = TRUE) 
+
+movies_genre_agg <- movies_genre %>%
+  group_by(genre, binary) %>%
+  summarise(n = n(),
+            .groups = "drop") %>%
+  group_by(genre) %>%
+  mutate(pct = n / sum(n),
+         N = sum(n)) %>%
+  pivot_wider(id_cols = c(genre, N),
+              names_from = binary,
+              values_from = pct) %>%
+  arrange(-PASS) %>%
+  rowid_to_column("order") %>%
+  pivot_longer(PASS:FAIL,
+               names_to = "binary",
+               values_to = "pct")
+
+ggplot(data = movies_genre_agg,
+       mapping = aes(y = reorder(genre, -order),
+                     x = pct,
+                     fill = binary)) +
+  geom_col() +
+  geom_text(data = movies_genre_agg %>% select(genre, order, N) %>% unique(.),
+            mapping = aes(y = reorder(genre, -order),
+                          x = 1.01,
+                          label = paste0("N = ", N),
+                          fill = NULL),
+            hjust = 0,
+            family = font,
+            color = fontcolor,
+            size = 3) +
+  scale_x_continuous(expand = expansion(mult = c(0, .1)), # bring labels to edge
+                     labels = scales::percent) +
+  labs(title = "Percent of Films by Genre that Pass the Bechdel Test",
+       subtitle = "Films released 1970 - 2013",
+       x = "",
+       y = "") +
+  guides(fill = FALSE) +
+  theme(panel.grid = element_blank(), # remove gridlines
+        plot.title.position = "plot",
+        plot.caption.position = "plot")
 
 
 
