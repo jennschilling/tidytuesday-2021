@@ -22,7 +22,7 @@ theme_set(theme_minimal(base_size = 12, base_family = font))
 
 theme_update(
   panel.grid.minor = element_blank(),
-  axis.text = element_text(size = 10, color = fontcolor),
+  axis.text = element_text(size = 9, color = fontcolor),
   
   legend.title = element_text(size = 12, color = fontcolor),
   legend.text = element_text(size = 10, color = fontcolor),
@@ -33,7 +33,7 @@ theme_update(
   plot.subtitle = element_text(size = 12, color = fontcolor, margin = margin(b = 15)),
   
   plot.caption.position = "plot",
-  plot.caption = element_text(size = 8, color = fontcolor),
+  plot.caption = element_text(size = 7, color = fontcolor),
   
   plot.margin = margin(t = 25, r = 25, b = 10, l = 25)
 )
@@ -143,7 +143,7 @@ ggplot(data = movies_pass_fail_summary %>%
 # Maybe look at genres
 table(movies$genre)
 
-#### Plot ####
+#### Plot 1 ####
 
 movies_genre <- movies %>%
   select(year, clean_test, binary, budget_2013, domgross_2013, intgross_2013,
@@ -194,18 +194,14 @@ ggplot(data = movies_genre_agg,
        subtitle = "Passing the Bechdel Test means that a film has two named women characters who have a conversation <br> 
        with each other about something other than a male character.",
        caption = "Data: **FiveThirtyEight** | Viz: **Jenn Schilling**<br><br>
-       Film included were released from 1970 to 2013 | Many films were categorized by 2 or 3 genres and are included in every genre identified",
+       Films included were released from 1970 to 2013 | Many films were categorized by 2 or 3 genres and are included in every genre identified",
        x = "",
        y = "") +
   guides(fill = FALSE) +
   theme(panel.grid = element_blank(), # remove gridlines
-        plot.title.position = "plot",
-        plot.caption.position = "plot",
         plot.subtitle = ggtext::element_markdown(),
         plot.caption = ggtext::element_markdown(size = 7),
         axis.text.y = element_text(size = 9))
-
-
 
 ggsave("2021-03-09\\genre_summary.png",
        plot = last_plot(),
@@ -214,4 +210,35 @@ ggsave("2021-03-09\\genre_summary.png",
        height = 6,
        type = "cairo")
 
+#### Plot 2 ####
 
+# Get 12 most frequent genres
+movies_genre_include <- movies_genre %>%
+  group_by(genre) %>%
+  summarise(n = n()) %>%
+  top_n(12) %>%
+  select(genre, n)
+
+movies_genre_sub <- left_join(movies_genre_include, movies_genre, by = "genre")
+
+ggplot(data = movies_genre_sub,
+       mapping = aes(x = imdb_rating,
+                     fill = binary)) +
+  geom_histogram(position = "fill",
+                 binwidth = 1) +
+  facet_wrap(~reorder(genre, -n)) +
+  scale_fill_manual(values = c( "white", "#1b9e77")) +
+  scale_y_continuous(labels = scales::percent) +
+  scale_x_continuous(breaks = c(2.5, 7.5),
+                     labels = c("low\nrating", "high\nrating")) +
+  labs(title = "Percent of Films by Genre and IMDB Rating that Pass the Bechdel Test",
+       subtitle = "Passing the Bechdel Test means that a film has two named women characters who have a conversation <br> 
+       with each other about something other than a male character.",
+       caption = "Data: **FiveThirtyEight** | Viz: **Jenn Schilling**<br><br>
+       Films included were released from 1970 to 2013 | Many films were categorized by 2 or 3 genres and are included in every genre identified",
+       x = "",
+       y = "") +
+  guides(fill = FALSE) +
+  theme(panel.grid = element_blank(), # remove gridlines
+        plot.subtitle = ggtext::element_markdown(),
+        plot.caption = ggtext::element_markdown())
