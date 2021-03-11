@@ -176,7 +176,8 @@ ggplot(data = movies_genre_agg,
        mapping = aes(y = reorder(genre, -order),
                      x = pct,
                      fill = binary)) +
-  geom_col() +
+  geom_col(color = "grey80",
+           size = 0.2) +
   geom_text(data = movies_genre_agg %>% select(genre, order, N) %>% unique(.),
             mapping = aes(y = reorder(genre, -order),
                           x = 1.01,
@@ -185,25 +186,32 @@ ggplot(data = movies_genre_agg,
             hjust = 0,
             family = font,
             color = fontcolor,
-            size = 3) +
+            size = 2) +
   scale_x_continuous(expand = expansion(mult = c(0, .1)), # bring labels to edge
                      labels = scales::percent) +
+  scale_fill_manual(values = c( "white", "#1b9e77")) +
   labs(title = "Percent of Films by Genre that Pass the Bechdel Test",
-       subtitle = "Films released 1970 - 2013",
+       subtitle = "Passing the Bechdel Test means that a film has two named women characters who have a conversation <br> 
+       with each other about something other than a male character.",
+       caption = "Data: **FiveThirtyEight** | Viz: **Jenn Schilling**<br><br>
+       Film included were released from 1970 to 2013 | Many films were categorized by 2 or 3 genres and are included in every genre identified",
        x = "",
        y = "") +
   guides(fill = FALSE) +
   theme(panel.grid = element_blank(), # remove gridlines
         plot.title.position = "plot",
-        plot.caption.position = "plot")
+        plot.caption.position = "plot",
+        plot.subtitle = ggtext::element_markdown(),
+        plot.caption = ggtext::element_markdown(size = 7),
+        axis.text.y = element_text(size = 9))
 
 
 
-# ggsave("2021-03-09\\.png",
-#        plot = last_plot(),
-#        device = "png",
-#        width = 8,
-#        height = 7,
-#        type = "cairo")
+ggsave("2021-03-09\\genre_summary.png",
+       plot = last_plot(),
+       device = "png",
+       width = 8,
+       height = 6,
+       type = "cairo")
 
 
