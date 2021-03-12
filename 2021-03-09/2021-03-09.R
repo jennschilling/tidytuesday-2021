@@ -221,29 +221,61 @@ movies_genre_include <- movies_genre %>%
 
 movies_genre_sub <- left_join(movies_genre_include, movies_genre, by = "genre")
 
+# Make label data
+label_data <- movies_genre_include %>%
+  mutate(binary = "PASS",
+         label = ifelse(genre == "Drama", "50%", ""))
+
 ggplot(data = movies_genre_sub,
        mapping = aes(x = imdb_rating,
                      fill = binary)) +
   geom_histogram(position = "fill",
-                 binwidth = 1,
-                 color = "white") +
+                 binwidth = 0.75,
+                 color = "white",
+                 alpha = 0.5,
+                 size = 1) +
+  geom_hline(yintercept = 0.5,
+             color = fontcolor,
+             alpha = 0.5,
+             linetype = 2)  +
   facet_wrap(~reorder(genre, -n),
-             nrow = 1) +
-  scale_fill_manual(values = c( "white", "#1b9e77")) +
-  scale_y_continuous(labels = scales::percent) +
-  scale_x_continuous(breaks = c(2.5, 9.5),
+             ncol = 1) +
+  geom_text(data = label_data,
+            mapping = aes(label = label),
+            x = 9.4, 
+            y = 0.7, 
+            family = font,
+            color = fontcolor,
+            alpha = 0.5,
+            size = 4) +
+  scale_fill_manual(values = c( "white", "#7570b3")) +
+  scale_y_continuous(labels = NULL) +
+  scale_x_continuous(limits = c(2.5, 9.5),
+                     breaks = c(2.7, 9.2),
                      labels = c("low\nrating", "high\nrating")) +
   coord_cartesian(expand = FALSE,
                   clip = "off") +
-  labs(title = "Percent of Films by Genre and IMDB Rating that Pass the Bechdel Test",
-       subtitle = "Passing the Bechdel Test means that a film has two named women characters who have a conversation
-       with each other about something other than a male character.",
+  labs(title = "Percent of Films by Genre and IMDB Rating<br> that Pass the Bechdel Test",
+       subtitle = "Passing the Bechdel Test means that a film has **two named women** <br> 
+       characters who **have a conversation with each other** about <br>
+       **something other than a male character**.",
        caption = "Data: **FiveThirtyEight** | Viz: **Jenn Schilling**<br><br>
-       Films included were released from 1970 to 2013 | Many films were categorized by 2 or 3 genres and are included in every genre identified",
-       x = "low rating                       high rating",
+       Films included were released from 1970 to 2013 <br>
+       Many films were categorized by 2 or 3 genres and are included in every genre identified",
+       x = "",
        y = "") +
   guides(fill = FALSE) +
   theme(panel.grid = element_blank(), # remove gridlines
-        plot.subtitle = ggtext::element_markdown(),
-        plot.caption = ggtext::element_markdown(),
-        axis.ticks = element_line(color = fontcolor))
+        panel.spacing = unit(0.35, "cm"), # increase spacing between facets
+        plot.title = ggtext::element_markdown(size = 18),
+        plot.subtitle = ggtext::element_markdown(size = 14),
+        plot.caption = ggtext::element_markdown(size = 10),
+        axis.text.x = element_text(size = 12, margin = margin(t = 5)),
+        strip.text = element_text(hjust = 0, size = 14))
+
+ggsave("2021-03-09\\genre_rating_summary.png",
+       plot = last_plot(),
+       device = "png",
+       width = 6,
+       height = 14,
+       type = "cairo")
