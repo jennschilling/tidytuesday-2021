@@ -212,11 +212,11 @@ ggsave("2021-03-09\\genre_summary.png",
 
 #### Plot 2 ####
 
-# Get 12 most frequent genres
+# Get 13 most frequent genres (more than 100 films)
 movies_genre_include <- movies_genre %>%
   group_by(genre) %>%
   summarise(n = n()) %>%
-  top_n(12) %>%
+  top_n(13) %>%
   select(genre, n)
 
 movies_genre_sub <- left_join(movies_genre_include, movies_genre, by = "genre")
@@ -224,7 +224,7 @@ movies_genre_sub <- left_join(movies_genre_include, movies_genre, by = "genre")
 # Make label data
 label_data <- movies_genre_include %>%
   mutate(binary = "PASS",
-         label = ifelse(genre == "Drama", "50%", ""))
+         label = ifelse(genre == "Action", "50%", ""))
 
 ggplot(data = movies_genre_sub,
        mapping = aes(x = imdb_rating,
@@ -238,7 +238,7 @@ ggplot(data = movies_genre_sub,
              color = fontcolor,
              alpha = 0.5,
              linetype = 2)  +
-  facet_wrap(~reorder(genre, -n),
+  facet_wrap(~genre,
              ncol = 1) +
   geom_text(data = label_data,
             mapping = aes(label = label),
@@ -260,8 +260,8 @@ ggplot(data = movies_genre_sub,
        characters who **have a conversation with each other** about <br>
        **something other than a male character**.",
        caption = "Data: **FiveThirtyEight** | Viz: **Jenn Schilling**<br><br>
-       Films included were released from 1970 to 2013 <br>
-       Many films were categorized by 2 or 3 genres and are included in every genre identified",
+       Many films were categorized by 2 or 3 genres and are included in every genre identified<br>
+       Films released between 1970 and 2013 | Only genres with at least 100 films are included",
        x = "",
        y = "") +
   guides(fill = FALSE) +
