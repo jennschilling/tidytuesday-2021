@@ -225,20 +225,25 @@ ggplot(data = movies_genre_sub,
        mapping = aes(x = imdb_rating,
                      fill = binary)) +
   geom_histogram(position = "fill",
-                 binwidth = 1) +
-  facet_wrap(~reorder(genre, -n)) +
+                 binwidth = 1,
+                 color = "white") +
+  facet_wrap(~reorder(genre, -n),
+             nrow = 1) +
   scale_fill_manual(values = c( "white", "#1b9e77")) +
   scale_y_continuous(labels = scales::percent) +
-  scale_x_continuous(breaks = c(2.5, 7.5),
+  scale_x_continuous(breaks = c(2.5, 9.5),
                      labels = c("low\nrating", "high\nrating")) +
+  coord_cartesian(expand = FALSE,
+                  clip = "off") +
   labs(title = "Percent of Films by Genre and IMDB Rating that Pass the Bechdel Test",
-       subtitle = "Passing the Bechdel Test means that a film has two named women characters who have a conversation <br> 
+       subtitle = "Passing the Bechdel Test means that a film has two named women characters who have a conversation
        with each other about something other than a male character.",
        caption = "Data: **FiveThirtyEight** | Viz: **Jenn Schilling**<br><br>
        Films included were released from 1970 to 2013 | Many films were categorized by 2 or 3 genres and are included in every genre identified",
-       x = "",
+       x = "low rating                       high rating",
        y = "") +
   guides(fill = FALSE) +
   theme(panel.grid = element_blank(), # remove gridlines
         plot.subtitle = ggtext::element_markdown(),
-        plot.caption = ggtext::element_markdown())
+        plot.caption = ggtext::element_markdown(),
+        axis.ticks = element_line(color = fontcolor))
