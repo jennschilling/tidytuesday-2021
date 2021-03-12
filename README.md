@@ -3,6 +3,7 @@
 Data visualizations developed in R using data from [#TidyTuesday 2021](https://github.com/rfordatascience/tidytuesday/tree/master/data/2021).
 
 # 09 March 2021
+![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-03-09/genre_rating_summary.png)
 ![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-03-09/genre_summary.png)
 
 # 03 March 2021
