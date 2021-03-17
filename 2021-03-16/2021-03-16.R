@@ -9,7 +9,8 @@ library(extrafont)
 
 #### Data #### 
 
-games <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-03-16/games.csv')
+games <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-03-16/games.csv') %>%
+  mutate(avg_peak_perc = parse_number(avg_peak_perc))
 
 #### Formatting ####
 
@@ -40,5 +41,18 @@ theme_update(
 
 ggplot(data = games,
        mapping = aes(x = year,
-                     y = avg)) +
+                     y = avg,
+                     group = gamename)) +
+  geom_boxplot()
+
+ggplot(data = games,
+       mapping = aes(x = avg,
+                     y = peak)) +
   geom_point()
+
+
+ggplot(data = games,
+       mapping = aes(x = avg_peak_perc,
+                     y = as.factor(year),
+                     group = as.factor(year))) +
+  ggridges::geom_density_ridges()
