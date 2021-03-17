@@ -10,7 +10,20 @@ library(extrafont)
 #### Data #### 
 
 games <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-03-16/games.csv') %>%
-  mutate(avg_peak_perc = parse_number(avg_peak_perc))
+  mutate(avg_peak_perc = parse_number(avg_peak_perc),
+         month = factor(month,
+                        levels = c("January",
+                                   "February",
+                                   "March",
+                                   "April",
+                                   "May",
+                                   "June",
+                                   "July",
+                                   "August",
+                                   "September",
+                                   "October",
+                                   "November",
+                                   "December"))) 
 
 #### Formatting ####
 
@@ -40,19 +53,12 @@ theme_update(
 #### Exploration ####
 
 ggplot(data = games,
-       mapping = aes(x = year,
+       mapping = aes(x = month,
                      y = avg,
                      group = gamename)) +
-  geom_boxplot()
-
-ggplot(data = games,
-       mapping = aes(x = avg,
-                     y = peak)) +
-  geom_point()
+  geom_boxplot() +
+  facet_wrap(~year)
 
 
-ggplot(data = games,
-       mapping = aes(x = avg_peak_perc,
-                     y = as.factor(year),
-                     group = as.factor(year))) +
-  ggridges::geom_density_ridges()
+
+
