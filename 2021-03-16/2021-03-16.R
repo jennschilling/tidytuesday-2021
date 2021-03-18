@@ -52,12 +52,29 @@ theme_update(
 
 #### Exploration ####
 
-ggplot(data = games,
-       mapping = aes(x = month,
-                     y = avg,
-                     group = gamename)) +
-  geom_boxplot() +
-  facet_wrap(~year)
+top_games <- games %>% 
+  filter(avg > 250000) %>%
+  select(gamename) %>%
+  unique(.)
+
+ggplot() +
+  geom_path(data = anti_join(games, top_games, by = "gamename"),
+            mapping = aes(y = avg,
+                          x = month,
+                          group = gamename),
+            alpha = 0.5) +
+  geom_path(data = right_join(games, top_games, by = "gamename"),
+            mapping = aes(y = avg,
+                          x = month,
+                          group = gamename,
+                          color = gamename)) +
+  facet_wrap(~year,
+             nrow = 1) +
+  scale_y_continuous(labels = scales::comma) +
+  coord_cartesian(expand = FALSE) +
+  theme(legend.position = "top",
+        axis.text.x = element_blank())
+
 
 
 
