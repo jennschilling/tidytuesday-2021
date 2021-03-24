@@ -15,6 +15,13 @@ un_combined <- left_join(un_votes, un_roll_call_issues, by = "rcid") %>%
   left_join(un_roll_calls, by = "rcid") %>%
   mutate(year = lubridate::year(date))
 
+un_combined_summary <- un_combined %>%
+  group_by(year, country, issue, vote) %>%
+  summarise(n = n(),
+            .groups = 'drop') %>%
+  ungroup() %>%
+  mutate(issue = factor(ifelse(is.na(issue), "Unknown", as.character(issue))))
+
 #### Formatting ####
 
 font <- "Gill Sans MT"
@@ -41,3 +48,4 @@ theme_update(
 )
 
 #### Make Plot ####
+
