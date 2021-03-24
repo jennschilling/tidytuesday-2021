@@ -20,6 +20,9 @@ un_combined_summary <- un_combined %>%
   summarise(n = n(),
             .groups = 'drop') %>%
   ungroup() %>%
+  group_by(year, country, issue) %>%
+  mutate(pct = n / sum(n)) %>%
+  ungroup() %>%
   mutate(issue = factor(ifelse(is.na(issue), "Unknown", as.character(issue))))
 
 #### Formatting ####
