@@ -21,9 +21,28 @@ un_combined_summary <- un_combined %>%
             .groups = 'drop') %>%
   ungroup() %>%
   group_by(year, country, issue) %>%
-  mutate(pct = n / sum(n)) %>%
+  mutate(pct = n / sum(n),
+         n_votes = sum(n)) %>%
   ungroup() %>%
   mutate(issue = factor(ifelse(is.na(issue), "Unknown", as.character(issue))))
+
+original_countries <- un_combined %>%
+  filter(year == 1946) %>%
+  select(country) %>%
+  unique(.) %>%
+  mutate(original = 1)
+
+un_combined_summary <- un_combined_summary %>%
+  left_join(original_countries) %>%
+  mutate(original = ifelse(is.na(original), 0, original))
+
+n_votes <-  un_combined %>%
+  select(year, issue, rcid) %>%
+  unique(.) %>%
+  group_by(year, issue) %>%
+  summarise(n = n(),
+            .groups = 'drop') %>%
+  ungroup()
 
 #### Formatting ####
 
@@ -52,3 +71,23 @@ theme_update(
 
 #### Make Plot ####
 
+ggplot(data = subset(un_combined_summary,
+                     original == 1 & vote == 'yes' &
+                       country != 'United States' &
+                       issue != 'Unknown'),
+       mapping = aes(x = year,
+                     y = pct)) +
+  geom_point(color = 'gray50', 
+             alpha = 0.25) +
+  geom_point(data = subset(un_combined_summary,
+                           original == 1 & vote == 'yes' &
+                             country == 'United States' &
+                             issue != 'Unknown'),
+             mapping = aes(x = year,
+                           y = pct),
+             color = '#1b9e77') +
+  scale_y_continuous(labels = scales::percent) +
+  facet_wrap(~issue)
+
+
+ggplot(data = )
