@@ -95,7 +95,7 @@ plot_issues <- function(issue_selected){
     geom_point(data = subset(un_combined_summary,
                              original == 1 & vote == 'yes' &
                                country == 'United States' &
-                               issue != 'Unknown'),
+                               issue == issue_selected),
                mapping = aes(x = year,
                              y = pct),
                color = '#1b9e77',
