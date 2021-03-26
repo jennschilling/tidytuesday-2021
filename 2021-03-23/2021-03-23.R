@@ -42,7 +42,8 @@ n_votes <-  un_combined %>%
   group_by(year, issue) %>%
   summarise(n = n(),
             .groups = 'drop') %>%
-  ungroup()
+  ungroup() %>%
+  filter(!is.na(issue))
 
 #### Formatting ####
 
