@@ -67,7 +67,7 @@ theme_update(
   plot.caption.position = "plot",
   plot.caption = element_text(size = 7, color = fontcolor),
   
-  plot.margin = margin(t = 5, r = 10, b = 5, l = 10)
+  plot.margin = margin(t = 10, r = 10, b = 10, l = 10)
 )
 
 #### Make Plot ####
@@ -103,7 +103,8 @@ plot_issues <- function(issue_selected){
     scale_y_continuous(labels = scales::percent) +
     labs(x = "",
          y = "",
-         title = issue_selected) 
+         title = issue_selected) +
+    theme(plot.margin = margin(t = 5, r = 10, b = 0, l = 10))
   
   p2 <- ggplot(data = subset(n_votes, issue == issue_selected),
                mapping = aes(x = year,
@@ -113,7 +114,8 @@ plot_issues <- function(issue_selected){
     labs(x = "",
          y = "") +
     theme(panel.grid = element_blank(),
-          axis.text = element_blank()) 
+          axis.text = element_blank()) +
+    theme(plot.margin = margin(t = 0, r = 10, b = 5, l = 10))
   
   p1 / p2 + plot_layout(nrow = 2, heights = c(4, 1))
   
