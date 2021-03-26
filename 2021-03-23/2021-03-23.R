@@ -44,11 +44,7 @@ n_votes <-  un_combined %>%
   summarise(n = n(),
             .groups = 'drop') %>%
   ungroup() %>%
-<<<<<<< HEAD
-  filter(!is.na(issue))
-=======
   mutate(issue = factor(ifelse(is.na(issue), "Unknown", as.character(issue))))
->>>>>>> abb840f6caa9016ea3204bed2c3343c8a8a66b4a
 
 #### Formatting ####
 
