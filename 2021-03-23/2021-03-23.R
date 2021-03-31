@@ -168,10 +168,10 @@ plots <- lapply(issues, plot_issues)
   plot_annotation(title = 'Since 1970, the <b style="color:#1b9e77">United States</b> has voted <b>yes</b> less 
                   frequently then most other countries in the U.N. General Assembly.',
                   
-                  subtitle = "The main graph shows the percent of votes that were <b>yes</b> by issue each year. 
-                  The line graph shows the number of votes by issue each year.<br> 
-                  The box shows the interquartile range for all countries with the median represented by the gap; 
-                  the point represents the United States. <br>",
+                  subtitle = 'For each issue, the main graph shows a box plot of the percent of <b>yes</b> votes
+                  made by each country; the <b style="color:#1b9e77">point</b> 
+                  represents the United States. <br>
+                  The line below the main graph represents the number of votes on each issue over time.',
                   
                   caption = "Data: <b>{unvotes}</b> | Viz: <b>Jenn Schilling</b>")
 
