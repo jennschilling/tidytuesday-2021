@@ -42,6 +42,9 @@ theme_update(
 
 #### Plot ####
 
+
+# Distribution of All Shades
+
 all_shades <- allShades %>%
   mutate(lightness_group = cut_interval(lightness, 20)) %>%
   group_by(lightness_group) %>%
@@ -49,20 +52,22 @@ all_shades <- allShades %>%
   mutate(y = row_number()) %>%
   ungroup()
 
-ggplot(data = all_shades,
+all_plot <- ggplot(data = all_shades,
        mapping = aes(x = lightness_group,
                      y = y,
                      fill = hex)) +
   geom_tile() +
   scale_fill_identity() +
   guides(fill = FALSE) +
-  labs(title = "Distribution of 6,816 foundation shades from Ulta and Sephora",
+  labs(title = "The distribution of foundation shades from 107 brands at Ulta and Sephora shows that there<br>
+       are more options for lighter complextions.",
        x = "",
        y = "") +
   coord_cartesian(expand = FALSE) +
   theme(axis.text = element_blank(),
         panel.grid = element_blank())
 
+# Distribution of Nude / Neutral Shades
 
 nude_shades <- all_shades %>%
   filter(name %in% c("Nude", "Neutral")) %>%
@@ -85,6 +90,8 @@ ggplot(data = nude_shades,
   theme(axis.text = element_blank(),
         panel.grid = element_blank())
 
+# Distribution by Category
+
 all_categories <- allCategories %>%
   left_join(allShades, by = c("brand", "product", "url", 
                               "imgSrc", "name", "specific", 
@@ -103,10 +110,10 @@ all_categories <- allCategories %>%
   mutate(y = row_number()) %>%
   ungroup() %>%
   group_by(category) %>%
-  mutate(category = paste0(category, " (", format(n(), big.mark = ","), ")")) %>%
+  mutate(category = paste0(category, " (", format(n(), big.mark = ","), ")\n")) %>%
   ungroup()
 
-ggplot(data = all_categories,
+cat_plot <- ggplot(data = all_categories,
        mapping = aes(x = lightness_group,
                      y = y,
                      fill = hex)) +
@@ -115,13 +122,27 @@ ggplot(data = all_categories,
   facet_wrap(~category,
              scales = "free_y") +
   guides(fill = FALSE) +
-  labs(title = "",
+  labs(title = "When foundation shades are categorized by their label, the distributions by category shows that<br>
+       **drink** and **wood** categories are more frequently used for darker shades while **gem** and **skin**<br>
+       categories are more frequently used for lighter shades.",
        x = "",
-       y = "") +
+       y = "",
+       caption =  "Data: <b>The Pudding</b> | Viz: <b>Jenn Schilling</b>") +
   coord_cartesian(expand = FALSE) +
   theme(axis.text = element_blank(),
         panel.grid = element_blank(),
         panel.spacing = unit(0.5, "cm"))
 
+# Put Plots Together
 
+all_plot / cat_plot +
+  plot_layout(heights = c(0.40, 0.60))
+
+
+ggsave("2021-03-30\\foundation_shades.png",
+       plot = last_plot(),
+       device = "png",
+       width = 7,
+       height = 9,
+       type = "cairo")
 
