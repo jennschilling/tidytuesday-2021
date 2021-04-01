@@ -60,7 +60,7 @@ all_plot <- ggplot(data = all_shades,
   scale_fill_identity() +
   guides(fill = FALSE) +
   labs(title = "The distribution of foundation shades from 107 brands at Ulta and Sephora shows that there<br>
-       are more options for lighter complextions.",
+       are more options for lighter complexions.",
        x = "",
        y = "") +
   coord_cartesian(expand = FALSE) +
