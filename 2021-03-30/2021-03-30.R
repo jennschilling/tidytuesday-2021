@@ -54,7 +54,7 @@ ggplot(data = all_shades,
   geom_tile() +
   scale_fill_identity() +
   guides(fill = FALSE) +
-  labs(title = "Distribution of all foundation shades from Ulta and Sephora",
+  labs(title = "Distribution of 6,816 foundation shades from Ulta and Sephora",
        x = "",
        y = "") +
   coord_cartesian(expand = FALSE) +
@@ -77,7 +77,7 @@ ggplot(data = nude_shades,
   geom_tile(color = 'white') +
   scale_fill_identity() +
   guides(fill = FALSE) +
-  labs(title = "Distribution of **Nude/Neutral** foundation shades from Ulta and Sephora",
+  labs(title = "Distribution of 176 **Nude/Neutral** foundation shades from Ulta and Sephora",
        x = "",
        y = "") +
   coord_cartesian(expand = FALSE) +
