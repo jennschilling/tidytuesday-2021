@@ -27,6 +27,8 @@ theme_update(
   axis.title = element_text(size = 10, color = fontcolor),
   axis.text = element_text(size = 9, color = fontcolor),
   
+  strip.text = element_text(size = 10, color = fontcolor, hjust = 0),
+  
   plot.title.position = "plot",
   plot.title = element_markdown(size = 12, color = fontcolor),
   
@@ -62,9 +64,8 @@ ggplot(data = all_shades,
         panel.grid = element_blank())
 
 
-nude_shades <- allShades %>%
+nude_shades <- all_shades %>%
   filter(name %in% c("Nude", "Neutral")) %>%
-  mutate(lightness_group = cut_interval(lightness, 20)) %>%
   group_by(lightness_group) %>%
   arrange(sat, .by_group = TRUE) %>%
   mutate(y = row_number()) %>%
@@ -83,5 +84,44 @@ ggplot(data = nude_shades,
   coord_cartesian(expand = FALSE) +
   theme(axis.text = element_blank(),
         panel.grid = element_blank())
+
+all_categories <- allCategories %>%
+  left_join(allShades, by = c("brand", "product", "url", 
+                              "imgSrc", "name", "specific", 
+                              "hex", "lightness")) %>%
+  separate(categories, into = c("cat1", "cat2", "cat3", "cat4"), sep = ", ") %>%
+  pivot_longer(cat1:cat4, 
+               names_to = "label",
+               values_to = "category",
+               values_drop_na = TRUE) %>%
+  select(-label) %>%
+  filter(category != "sand") %>% # only 1 record
+  mutate(lightness_group = cut_interval(lightness, 20),
+         category = str_to_sentence(category)) %>%
+  group_by(category, lightness_group) %>%
+  arrange(sat, .by_group = TRUE) %>%
+  mutate(y = row_number()) %>%
+  ungroup() %>%
+  group_by(category) %>%
+  mutate(category = paste0(category, " (", format(n(), big.mark = ","), ")")) %>%
+  ungroup()
+
+ggplot(data = all_categories,
+       mapping = aes(x = lightness_group,
+                     y = y,
+                     fill = hex)) +
+  geom_tile() +
+  scale_fill_identity() +
+  facet_wrap(~category,
+             scales = "free_y") +
+  guides(fill = FALSE) +
+  labs(title = "",
+       x = "",
+       y = "") +
+  coord_cartesian(expand = FALSE) +
+  theme(axis.text = element_blank(),
+        panel.grid = element_blank(),
+        panel.spacing = unit(0.5, "cm"))
+
 
 
