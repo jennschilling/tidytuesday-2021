@@ -100,8 +100,8 @@ cat_plot <- ggplot(data = all_categories,
              scales = "free_y") +
   guides(fill = FALSE) +
   labs(title = "When foundation shades are categorized by their label, the distributions by category shows that<br>
-       **drink** and **wood** categories are more frequently used for darker shades while **gem** and **skin**<br>
-       categories are more frequently used for lighter shades.",
+       **drink** and **wood** labels are more frequently used for darker shades while **gem** and **skin** labels<br> 
+       are more frequently used for lighter shades.",
        x = "",
        y = "",
        caption =  "Data: <b>The Pudding</b> | Viz: <b>Jenn Schilling</b>") +
@@ -121,6 +121,6 @@ ggsave("2021-03-30\\foundation_shades.png",
        device = "png",
        width = 7,
        height = 9,
-       dpi = 500,
+       dpi = 400,
        type = "cairo")
 
