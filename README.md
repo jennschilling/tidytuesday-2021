@@ -3,7 +3,7 @@
 Data visualizations developed in R using data from [#TidyTuesday 2021](https://github.com/rfordatascience/tidytuesday/tree/master/data/2021).
 
 # 30 March 2021
-![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-03-30/foundation_shades.png)
+<img src="https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-03-30/foundation_shades.png" height="800">
 Data Source & Inspiration: [The Naked Truth, The Pudding](https://pudding.cool/2021/03/foundation-names/)
 
 # 23 March 2021
