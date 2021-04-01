@@ -67,29 +67,6 @@ all_plot <- ggplot(data = all_shades,
   theme(axis.text = element_blank(),
         panel.grid = element_blank())
 
-# Distribution of Nude / Neutral Shades
-
-nude_shades <- all_shades %>%
-  filter(name %in% c("Nude", "Neutral")) %>%
-  group_by(lightness_group) %>%
-  arrange(sat, .by_group = TRUE) %>%
-  mutate(y = row_number()) %>%
-  ungroup()
-
-ggplot(data = nude_shades,
-       mapping = aes(x = lightness_group,
-                     y = y,
-                     fill = hex)) +
-  geom_tile(color = 'white') +
-  scale_fill_identity() +
-  guides(fill = FALSE) +
-  labs(title = "Distribution of 176 **Nude/Neutral** foundation shades from Ulta and Sephora",
-       x = "",
-       y = "") +
-  coord_cartesian(expand = FALSE) +
-  theme(axis.text = element_blank(),
-        panel.grid = element_blank())
-
 # Distribution by Category
 
 all_categories <- allCategories %>%
@@ -144,5 +121,6 @@ ggsave("2021-03-30\\foundation_shades.png",
        device = "png",
        width = 7,
        height = 9,
+       dpi = 500,
        type = "cairo")
 
