@@ -99,7 +99,7 @@ cat_plot <- ggplot(data = all_categories,
   facet_wrap(~category,
              scales = "free_y") +
   guides(fill = FALSE) +
-  labs(title = "When foundation shades are categorized by their label, the distributions by category shows that<br>
+  labs(title = "When foundation shades are categorized by their label, the distributions by category show that<br>
        **drink** and **wood** labels are more frequently used for darker shades while **gem** and **skin** labels<br> 
        are more frequently used for lighter shades.",
        x = "",
