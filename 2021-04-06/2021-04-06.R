@@ -8,6 +8,7 @@ library(tidyverse)
 library(extrafont)
 library(patchwork)
 library(ggtext)
+library(treemap)
 
 #### Data #### 
 
@@ -43,3 +44,25 @@ theme_update(
   plot.margin = margin(t = 10, r = 10, b = 10, l = 10)
 )
 
+#### Make Tree Map ####
+
+forest_area_agg <- forest_area %>%
+  filter(is.na(code)) %>%
+  filter(entity %in% c('Africa', 
+                       'Asia', 
+                       'Europe', 
+                       'Oceania', 
+                       'South America', 
+                       'Northern America')) %>%
+  filter(year %in% c(1990, 2020))
+
+treemap(dtf = forest_area_agg,
+        index = c("entity", "year"),
+        vSize = "forest_area",
+        type = "index")
+
+
+#### Make Slope Chart ####
+
+ggplot(data = forest_area,
+       mapping = aes())
