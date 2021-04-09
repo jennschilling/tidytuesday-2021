@@ -9,6 +9,7 @@ library(extrafont)
 library(patchwork)
 library(ggtext)
 library(treemap)
+library(ggbump)
 
 #### Data #### 
 
@@ -41,7 +42,7 @@ theme_update(
   plot.caption.position = "plot",
   plot.caption = element_markdown(size = 8, color = fontcolor),
   
-  plot.margin = margin(t = 10, r = 10, b = 10, l = 10)
+  plot.margin = margin(t = 15, r = 15, b = 15, l = 15)
 )
 
 #### Make Tree Map ####
@@ -62,7 +63,55 @@ treemap(dtf = forest_area_agg,
         type = "index")
 
 
-#### Make Slope Chart ####
+#### Make Bump Chart ####
 
-ggplot(data = forest_area,
-       mapping = aes())
+forest_area_agg <- forest_area %>%
+  filter(is.na(code)) %>%
+  filter(entity %in% c('Africa', 
+                       'Asia', 
+                       'Europe', 
+                       'Oceania', 
+                       'South America', 
+                       'Northern America')) %>%
+  filter(year %in% c(1990, 2000, 2010, 2020))
+
+ggplot(data = forest_area_agg,
+       mapping = aes(x = year,
+                     y = forest_area,
+                     color = entity)) +
+  geom_point(size = 5) +
+  geom_bump(size = 2, 
+            smooth = 50) +
+  geom_text(data = forest_area_agg %>% filter(year == 2020),
+            mapping = aes(x = year + 0.5,
+                          y = forest_area,
+                          color = entity,
+                          label = entity),
+            hjust = 0,
+            size = 5,
+            family = font) +
+  guides(color = FALSE) +
+  scale_x_continuous(limits = c(1990, 2024.5)) +
+  scale_y_continuous(labels = scales::percent_format(scale = 1, accuracy = 1)) +
+  scale_color_manual(values = c("#addd8e", "#78c679", "#41ab5d",
+                                "#238443", "#006837", "#004529")) +
+  coord_cartesian(clip = "off") +
+  labs(x = "",
+       y = "",
+       title = "Percent of global forest area by continent, 1990-2020",
+       caption = "Data: <b>Our World In Data</b> | Viz: <b>Jenn Schilling</b>") +
+  theme(panel.grid = element_blank(),
+        
+        axis.text = element_text(size = 12, color = fontcolor),
+        plot.title = element_markdown(size = 18, color = fontcolor),
+        plot.caption = element_markdown(size = 10, color = fontcolor),
+        
+        axis.ticks.y = element_line(size = 0.7, color = fontcolor))
+
+ggsave("2021-04-06\\percent_forest.png",
+       plot = last_plot(),
+       device = "png",
+       width = 10,
+       height = 10,
+       dpi = 300,
+       type = "cairo")
