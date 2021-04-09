@@ -2,6 +2,9 @@
 
 Data visualizations developed in R using data from [#TidyTuesday 2021](https://github.com/rfordatascience/tidytuesday/tree/master/data/2021).
 
+# 06 April 2021
+![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-04-06/percent_forest.png)
+
 # 30 March 2021
 ![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-03-30/foundation_shades.png)
 Data Source & Inspiration: [The Naked Truth from The Pudding](https://pudding.cool/2021/03/foundation-names/)
