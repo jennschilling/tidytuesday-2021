@@ -28,11 +28,20 @@ post_offices_az <- post_offices %>%
   pivot_longer(cols = established:discontinued,
                names_to = 'yr_type',
                values_to = 'year',
-               values_drop_na = TRUE)
+               values_drop_na = FALSE) 
 
-# Remove NA latitude and longitude
-post_offices_az_clean <- post_offices_az %>%
-  filter(!is.na(longitude) & !is.na(latitude))
+# Make long data set that has row for each post office and year it's active
+max_year <- max(post_offices_az$year, na.rm = TRUE)
+
+post_offices_az_long <- post_offices_az %>%
+  mutate(year = ifelse(is.na(year), max_year, year)) %>%
+  pivot_wider(names_from = 'yr_type', 
+              values_from = 'year') %>%
+  mutate(time = discontinued - established + 1) %>%
+  uncount(time) %>%
+  group_by(id) %>%
+  mutate(year = established + seq_along(established) - 1) %>%
+  filter(!is.na(latitude))
 
 # Get Arizona Outline
 az <- map_data('state') %>%
@@ -73,10 +82,9 @@ theme_map <- function(base_size = 9, base_family = font) {
 
 #### Make Map ####
 
-p <- ggplot(data = post_offices_az_clean,
+p <- ggplot(data = post_offices_az_long,
        mapping = aes(x = longitude,
-                     y = latitude, 
-                     color = yr_type)) +
+                     y = latitude)) +
   geom_polygon(data = az,
                mapping = aes(x = long,
                              y = lat),
@@ -87,14 +95,14 @@ p <- ggplot(data = post_offices_az_clean,
   theme_map() +
   scale_color_manual(values = c('white', 'black')) +
   transition_manual(frames = year,
-                    cumulative = TRUE) +
+                    cumulative = FALSE) +
   labs(title = 'Post Offices in Arizona',
        subtitle = 'Year: {current_frame}') 
 
 # Source: https://stackoverflow.com/questions/56447125/gganimate-not-showing-all-frames
 animate(
   plot = p, 
-  nframes = length(unique(post_offices_az_clean$year)), 
+  nframes = length(unique(post_offices_az_long$year)), 
   fps = 4, 
   end_pause = 8
 )
