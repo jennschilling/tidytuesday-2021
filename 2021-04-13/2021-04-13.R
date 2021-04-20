@@ -94,8 +94,6 @@ theme_map <- function(base_size = 9, base_family = font) {
         panel.grid=element_blank(),
         panel.spacing=unit(0, "lines"),
         plot.background=element_blank(),
-        legend.justification = c(0,0),
-        legend.position = c(0,0),
         
         plot.title.position = "plot",
         plot.title = element_markdown(size = 12, color = fontcolor),
@@ -129,17 +127,18 @@ p <- ggplot(data = post_offices_az_long,
                size = 1) +
  # guides(fill = FALSE) +
   scale_fill_identity(breaks = territories_az$color,
-                      labels = territories_az$name) +
+                      labels = territories_az$name,
+                      guide = "legend") +
   geom_point(show.legend = FALSE) +
   coord_map() +
   theme_map() +
-  scale_color_manual(values = c('white', 'black')) +
+  scale_color_manual(values = c('white', fontcolor)) +
   transition_manual(frames = year,
                     cumulative = FALSE) +
   labs(title = 'Post Offices in Arizona',
        subtitle = 'Year: {current_frame}',
-       caption = ) +
-  theme(legend.position = "right")
+       fill = "Native Territory",
+       caption = "")
 
 # Source: https://stackoverflow.com/questions/56447125/gganimate-not-showing-all-frames
 animate(
