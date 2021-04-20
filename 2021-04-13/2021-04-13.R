@@ -52,7 +52,25 @@ az <- map_data('state') %>%
 territories <- fromJSON("https://native-land.ca/coordinates/indigenousTerritories.json")
 
 # Transform JSON to Data Frame
+territories_comb <- bind_cols(territories$features$properties, territories$features$geometry)
 
+territories_df <- territories_comb %>%
+  unnest(., coordinates) %>%
+  unnest(., coordinates) %>%
+  separate(coordinates, into = c("long", "lat"), sep = ",") %>%
+  mutate(lat = parse_number(lat),
+         long = parse_number(long)) %>%
+  janitor::clean_names()
+
+# Get Arizona Lands
+territories_az_names <- territories_df %>%
+  filter(long >= min(az$long) & long <= max(az$long) &
+           lat >= min(az$lat) & lat <= max(az$lat)) %>%
+  select(name) %>%
+  unique(.)
+
+territories_az <- left_join(territories_az_names, territories_df, by = "name") %>%
+  mutate(color = ifelse(color == "https://native-land.ca/maps/territories/hia-ced-oodham/", "#2b8cbe", color))
 
 # Tribal Lands Current
 
@@ -96,11 +114,22 @@ theme_map <- function(base_size = 9, base_family = font) {
 p <- ggplot(data = post_offices_az_long,
        mapping = aes(x = longitude,
                      y = latitude)) +
+  geom_polygon(data = territories_az,
+               mapping = aes(x = long,
+                             y = lat,
+                             group = name, 
+                             fill = color),
+               alpha = 0.5) +
   geom_polygon(data = az,
                mapping = aes(x = long,
                              y = lat),
                fill = 'white',
-               color = fontcolor) +
+               alpha = 0,
+               color = fontcolor,
+               size = 1) +
+ # guides(fill = FALSE) +
+  scale_fill_identity(breaks = territories_az$color,
+                      labels = territories_az$name) +
   geom_point(show.legend = FALSE) +
   coord_map() +
   theme_map() +
@@ -108,7 +137,9 @@ p <- ggplot(data = post_offices_az_long,
   transition_manual(frames = year,
                     cumulative = FALSE) +
   labs(title = 'Post Offices in Arizona',
-       subtitle = 'Year: {current_frame}') 
+       subtitle = 'Year: {current_frame}',
+       caption = ) +
+  theme(legend.position = "right")
 
 # Source: https://stackoverflow.com/questions/56447125/gganimate-not-showing-all-frames
 animate(
