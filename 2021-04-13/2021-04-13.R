@@ -8,8 +8,8 @@ library(tidyverse)
 library(extrafont)
 library(maps)
 library(gganimate)
-
 library(ggtext)
+library(jsonlite)
 
 #### Data #### 
 
@@ -46,6 +46,17 @@ post_offices_az_long <- post_offices_az %>%
 # Get Arizona Outline
 az <- map_data('state') %>%
   filter(region == 'arizona')
+
+# Native Land (https://native-land.ca/)
+
+territories <- fromJSON("https://native-land.ca/coordinates/indigenousTerritories.json")
+
+# Transform JSON to Data Frame
+
+
+# Tribal Lands Current
+
+tribal_lands <- fromJSON("https://opendata.arcgis.com/datasets/7ae6552b43984219a2791879a83e2baa_27.geojson")
 
 #### Formatting ####
 
