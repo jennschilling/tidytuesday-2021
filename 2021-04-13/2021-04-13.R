@@ -125,7 +125,7 @@ p <- ggplot(data = post_offices_az_long,
                alpha = 0,
                color = fontcolor,
                size = 1) +
- # guides(fill = FALSE) +
+  guides(fill = FALSE) +
   scale_fill_identity(breaks = territories_az$color,
                       labels = territories_az$name,
                       guide = "legend") +
@@ -138,12 +138,13 @@ p <- ggplot(data = post_offices_az_long,
   labs(title = 'Post Offices in Arizona',
        subtitle = 'Year: {current_frame}',
        fill = "Native Territory",
-       caption = "Native Territory sourced from https://native-land.ca/")
+       caption = "Native Territory sourced from https://native-land.ca/"
+       )
 
 # Source: https://stackoverflow.com/questions/56447125/gganimate-not-showing-all-frames
 animate(
-  plot = p, 
-  nframes = length(unique(post_offices_az_long$year)), 
-  fps = 4, 
+  plot = p,
+  nframes = length(unique(post_offices_az_long$year)),
+  fps = 4,
   end_pause = 8
 )
