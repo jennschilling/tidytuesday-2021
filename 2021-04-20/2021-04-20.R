@@ -12,6 +12,24 @@ library(ggtext)
 
 netflix_titles <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-04-20/netflix_titles.csv')
 
+# Pivot out category labels
+netflix_long <- netflix_titles %>%
+  separate(listed_in,
+           into = c('cat_1', 'cat_2', 'cat_3'),
+           sep = ', ') %>%
+  pivot_longer(cols = cat_1:cat_3,
+               names_to = 'col',
+               values_to = 'category',
+               values_drop_na = TRUE) %>%
+  select(-col)
+
+# Aggregate data
+netflix_agg <- netflix_long %>%
+  mutate(added_year = str_sub(date_added, start = -4)) %>%
+  group_by(added_year, release_year, type, rating, category) %>%
+  summarise(num = n(),
+            .groups = 'drop')
+
 #### Formatting ####
 
 font <- "Gill Sans MT"
@@ -37,3 +55,4 @@ theme_update(
   
   plot.margin = margin(t = 15, r = 15, b = 15, l = 15)
 )
+
