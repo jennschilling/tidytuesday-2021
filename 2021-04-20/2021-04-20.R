@@ -10,10 +10,12 @@ library(ggtext)
 
 #### Data #### 
 
-netflix_titles <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-04-20/netflix_titles.csv')
+netflix_titles <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-04-20/netflix_titles.csv') %>%
+  mutate(added_year = str_sub(date_added, start = -4)) 
 
 # Pivot out category labels
 netflix_long <- netflix_titles %>%
+  mutate(added_year = str_sub(date_added, start = -4)) %>%
   separate(listed_in,
            into = c('cat_1', 'cat_2', 'cat_3'),
            sep = ', ') %>%
@@ -24,9 +26,21 @@ netflix_long <- netflix_titles %>%
   select(-col)
 
 # Aggregate data
-netflix_agg <- netflix_long %>%
-  mutate(added_year = str_sub(date_added, start = -4)) %>%
-  group_by(added_year, release_year, type, rating, category) %>%
+netflix_agg_type <- netflix_long %>%
+  filter(!is.na(added_year) & !is.na(type)) %>%
+  group_by(added_year, type) %>%
+  summarise(num = n(),
+            .groups = 'drop')
+
+netflix_agg_cat <- netflix_long %>%
+  filter(!is.na(added_year) & !is.na(category)) %>%
+  group_by(added_year, category) %>%
+  summarise(num = n(),
+            .groups = 'drop')
+
+netflix_agg_rating <- netflix_long %>%
+  filter(!is.na(added_year) & !is.na(rating)) %>%
+  group_by(added_year, rating) %>%
   summarise(num = n(),
             .groups = 'drop')
 
@@ -55,4 +69,19 @@ theme_update(
   
   plot.margin = margin(t = 15, r = 15, b = 15, l = 15)
 )
+
+#### Plot ####
+
+ggplot(data = netflix_agg_rating,
+       mapping = aes(x = added_year,
+                     y = num,
+                     color = rating,
+                     group = rating)) +
+  geom_line()
+
+ggplot(data = netflix_titles,
+       mapping = aes(x = added_year,
+                     group = rating,
+                     color = rating)) +
+  geom_histogram(stat = "count")
 
