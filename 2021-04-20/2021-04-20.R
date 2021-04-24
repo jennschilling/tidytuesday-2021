@@ -70,7 +70,8 @@ sankey <- ggplot(data = netflix_agg_type,
   scale_fill_manual(values = c(netflix_red, white)) +
   scale_color_manual(values = c(netflix_red, white)) +
   coord_cartesian(clip = "off") +
-  labs(title = "Most new additions to Netflix have been movies. Netflix began adding many more movies and tv shows in 2016.") +
+  labs(title = "Most new additions to Netflix have been movies. Netflix began adding many more movies and tv shows in 2016.<br>
+       Despite the pandemic, Netflix added only 144 fewer titles in 2020 compared to 2019.") +
   theme_void() +
   theme(axis.text.x = element_text(size = 9, color = white, family = font),
         
