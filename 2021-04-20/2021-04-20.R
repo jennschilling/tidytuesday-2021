@@ -70,10 +70,13 @@ sankey <- ggplot(data = netflix_agg_type,
   scale_fill_manual(values = c(netflix_red, white)) +
   scale_color_manual(values = c(netflix_red, white)) +
   coord_cartesian(clip = "off") +
-  labs(title = "Most new additions to Netflix have been movies. Netflix began adding many more movies and tv shows in 2016.<br>
-       Despite the pandemic, Netflix added only 144 fewer titles in 2020 compared to 2019.") +
+  labs(title = "Most new additions to Netflix have been movies. Starting in 2015, Netflix began adding many more titles each year.<br>",
+       x = "<br>Proportion of titles added that are movies or tv shows.") +
   theme_void() +
   theme(axis.text.x = element_text(size = 9, color = white, family = font),
+        
+        axis.title.x = element_markdown(size = 8, color = netflix_grey, 
+                                    family = font, hjust = 0),
         
         panel.background = element_rect(fill = black, color = NA),
         plot.background = element_rect(fill = black, color = NA),
@@ -103,8 +106,9 @@ line <- ggplot(data = netflix_agg_type %>%
             mapping = aes(x = added_year + 0.1,
                           y = total,
                           label = paste0("In ", added_year, ", ",
-                                         scales::comma(total), " movies\n",
-                                         "and tv shows were\nadded to Netflix.")),
+                                         scales::comma(total), " titles\n",
+                                         "were added to Netflix,\nonly 144 less than ",
+                                         added_year-1, ".")),
             color = netflix_grey,
             hjust = 0,
             vjust = 0.5,
@@ -114,7 +118,7 @@ line <- ggplot(data = netflix_agg_type %>%
   coord_cartesian(clip = "off") +
   scale_x_continuous(breaks = seq(from = 2008, to = 2020)) +
   labs(caption = "Data: <b>Kaggle</b> | Viz: <b>Jenn Schilling</b>",
-       x = "Line shows the total number of movies and tv shows added each year.",
+       x = "Trend line shows the total number of titles added each year.",
        y = "") +
   theme_bw() +
   theme(axis.text = element_blank(),
