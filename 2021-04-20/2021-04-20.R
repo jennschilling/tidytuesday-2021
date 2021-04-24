@@ -7,81 +7,113 @@
 library(tidyverse)
 library(extrafont)
 library(ggtext)
+library(ggalluvial)
 
 #### Data #### 
 
 netflix_titles <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-04-20/netflix_titles.csv') %>%
   mutate(added_year = str_sub(date_added, start = -4)) 
 
-# Pivot out category labels
-netflix_long <- netflix_titles %>%
-  mutate(added_year = str_sub(date_added, start = -4)) %>%
-  separate(listed_in,
-           into = c('cat_1', 'cat_2', 'cat_3'),
-           sep = ', ') %>%
-  pivot_longer(cols = cat_1:cat_3,
-               names_to = 'col',
-               values_to = 'category',
-               values_drop_na = TRUE) %>%
-  select(-col)
-
 # Aggregate data
-netflix_agg_type <- netflix_long %>%
+netflix_agg_type <- netflix_titles %>%
   filter(!is.na(added_year) & !is.na(type)) %>%
   group_by(added_year, type) %>%
   summarise(num = n(),
-            .groups = 'drop')
+            .groups = 'drop') %>%
+  group_by(added_year) %>%
+  mutate(pct = num / sum(num),
+         added_year = parse_number(added_year))
 
-netflix_agg_cat <- netflix_long %>%
-  filter(!is.na(added_year) & !is.na(category)) %>%
-  group_by(added_year, category) %>%
-  summarise(num = n(),
-            .groups = 'drop')
+# Labels
+type_labels <- tibble(
+  x_prop = c(2007.7, 2007.7),
+  x_num = c(2021, 2021),
+  y_prop = c(0.25, 0.75),
+  y_num = c(29, 88),
+  type = c("TV Show", "Movie"),
+  label_prop = c("TV\nShow", "Movie"),
+  label_num = c("TV Show", "Movie")
+)
 
-netflix_agg_rating <- netflix_long %>%
-  filter(!is.na(added_year) & !is.na(rating)) %>%
-  group_by(added_year, rating) %>%
-  summarise(num = n(),
-            .groups = 'drop')
 
 #### Formatting ####
 
 font <- "Gill Sans MT"
 fontcolor <- "gray30"
 
-theme_set(theme_minimal(base_size = 12, base_family = font))
-
-theme_update(
-  panel.grid.minor = element_blank(),
-  
-  axis.title = element_text(size = 10, color = fontcolor),
-  axis.text = element_text(size = 9, color = fontcolor),
-  
-  strip.text = element_text(size = 10, color = fontcolor, hjust = 0),
-  
-  plot.title.position = "plot",
-  plot.title = element_markdown(size = 12, color = fontcolor),
-  
-  plot.subtitle = element_markdown(size = 10, color = fontcolor),
-  
-  plot.caption.position = "plot",
-  plot.caption = element_markdown(size = 8, color = fontcolor),
-  
-  plot.margin = margin(t = 15, r = 15, b = 15, l = 15)
-)
-
 #### Plot ####
 
-ggplot(data = netflix_agg_rating,
+# Sankey Flow Diagram of Proportion
+ggplot(data = netflix_agg_type,
+       mapping = aes(x = added_year,
+                     y = pct,
+                     stratum = type,
+                     alluvium = type,
+                     fill = type,
+                     label = num)) +
+  geom_alluvium() +
+  geom_stratum() +
+  geom_text(data = type_labels,
+            mapping = aes(x = x_prop,
+                          y = y_prop,
+                          label = label_prop,
+                          color = type),
+            family = font, 
+            size = 4,
+            hjust = 1) +
+  guides(fill = FALSE,
+         color = FALSE) +
+  scale_x_continuous(breaks = seq(from = 2008, to = 2021)) +
+  scale_fill_manual(values = c("#db0000", "#000000")) +
+  scale_color_manual(values = c("#db0000", "#000000")) +
+  coord_cartesian(expand = FALSE,
+                  clip = "off") +
+  labs(title = "Proportion of movies and tv shows added to Netflix each year<br>",
+       caption = "Data: <b>Kaggle</b> | Viz: <b>Jenn Schilling</b>") +
+  theme_void() +
+  theme(axis.text.x = element_text(size = 9, color = "#000000", family = font),
+        
+        plot.margin = margin(t = 20, r = 45, b = 40, l = 45),
+        
+        plot.title.position = "plot",
+        plot.title = element_markdown(size = 12, color = "#000000", family = font),
+        
+        plot.caption.position = "plot",
+        plot.caption = element_markdown(size = 8, color = "#000000", family = font))
+
+# Line graph of number 
+ggplot(data = netflix_agg_type,
        mapping = aes(x = added_year,
                      y = num,
-                     color = rating,
-                     group = rating)) +
-  geom_line()
+                     group = type,
+                     color = type,
+                     label = num)) +
+  geom_line(size = 2) +
+  geom_text(data = type_labels,
+            mapping = aes(x = x_num,
+                          y = y_num,
+                          label = label_num,
+                          color = type),
+            family = font, 
+            size = 4,
+            hjust = 0) +
+  guides(color = FALSE) +
+  scale_x_continuous(breaks = seq(from = 2008, to = 2021)) +
+  scale_color_manual(values = c("#db0000", "#000000")) +
+  coord_cartesian(expand = FALSE,
+                  clip = "off") +
+  labs(title = "Number of movies and tv shows added to Netflix each year<br>",
+       caption = "Data: <b>Kaggle</b> | Viz: <b>Jenn Schilling</b>") +
+  theme_void() +
+  theme(axis.text.x = element_text(size = 9, color = "#000000", family = font),
+        
+        plot.margin = margin(t = 20, r = 45, b = 40, l = 45),
+        
+        plot.title.position = "plot",
+        plot.title = element_markdown(size = 12, color = "#000000", family = font),
+        
+        plot.caption.position = "plot",
+        plot.caption = element_markdown(size = 8, color = "#000000", family = font))
 
-ggplot(data = netflix_titles,
-       mapping = aes(x = added_year,
-                     group = rating,
-                     color = rating)) +
-  geom_histogram(stat = "count")
+
 
