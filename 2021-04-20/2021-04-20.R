@@ -29,12 +29,9 @@ netflix_agg_type <- netflix_titles %>%
 # Labels
 type_labels <- tibble(
   x_prop = c(2007.7, 2007.7),
-  x_num = c(2020.1, 2020.1),
   y_prop = c(0.25, 0.75),
-  y_num = c(697, 1312),
   type = c("TV Show", "Movie"),
-  label_prop = c("TV\nShow", "Movie"),
-  label_num = c("TV Show", "Movie")
+  label_prop = c("TV\nShow", "Movie")
 )
 
 
@@ -43,9 +40,9 @@ type_labels <- tibble(
 font <- "Gill Sans MT"
 fontcolor <- "gray30"
 
-netflix_red <- "#db0000"
-netflix_grey <- "#564d4d"
-black <- "#000000"
+netflix_red <- "#e50914"
+netflix_grey <- "#dedede"
+black <- "#221f1f"
 white <- "#ffffff"
 
 #### Plot ####
@@ -56,8 +53,7 @@ sankey <- ggplot(data = netflix_agg_type,
                      y = pct,
                      stratum = type,
                      alluvium = type,
-                     fill = type,
-                     label = num)) +
+                     fill = type)) +
   geom_alluvium() +
   geom_stratum() +
   geom_text(data = type_labels,
@@ -73,17 +69,16 @@ sankey <- ggplot(data = netflix_agg_type,
   scale_x_continuous(breaks = seq(from = 2008, to = 2020)) +
   scale_fill_manual(values = c(netflix_red, white)) +
   scale_color_manual(values = c(netflix_red, white)) +
-  coord_cartesian(expand = FALSE,
-                  clip = "off") +
-  labs(title = "Proportion of movies and tv shows added to Netflix each year<br>",
-       caption = "Data: <b>Kaggle</b> | Viz: <b>Jenn Schilling</b>") +
+  coord_cartesian(clip = "off") +
+  labs(title = "Neflix began adding many more movies and tv shows in 2016.<br>
+  Most new additions have been movies, especially in last four years.") +
   theme_void() +
   theme(axis.text.x = element_text(size = 9, color = white, family = font),
         
-        panel.background = element_rect(fill = black),
-        plot.background = element_rect(fill = black),
+        panel.background = element_rect(fill = black, color = NA),
+        plot.background = element_rect(fill = black, color = NA),
         
-        plot.margin = margin(t = 15, r = 45, b = 15, l = 45),
+        plot.margin = margin(t = 15, r = 65, b = 15, l = 45),
         
         plot.title.position = "plot",
         plot.title = element_markdown(size = 12, color = white, family = font),
@@ -91,48 +86,51 @@ sankey <- ggplot(data = netflix_agg_type,
         plot.caption.position = "plot",
         plot.caption = element_markdown(size = 8, color = white, family = font))
 
-# Line graph of number 
-line <- ggplot(data = netflix_agg_type,
+# Line graph of total number added
+line <- ggplot(data = netflix_agg_type %>%
+                 group_by(added_year) %>%
+                 summarise(total = sum(num),
+                           .groups = "drop"),
        mapping = aes(x = added_year,
-                     y = num,
-                     group = type,
-                     color = type,
-                     label = num)) +
-  geom_line(size = 1.5) +
-  geom_text(data = type_labels,
-            mapping = aes(x = x_num,
-                          y = y_num,
-                          label = label_num,
-                          color = type),
-            family = font, 
-            size = 4,
-            hjust = 0) +
+                     y = total)) +
+  geom_line(size = 1.5,
+            color = netflix_grey) +
+  geom_text(data = netflix_agg_type %>%
+              group_by(added_year) %>%
+              summarise(total = sum(num),
+                        .groups = "drop") %>%
+              filter(added_year == 2020),
+            mapping = aes(x = added_year + 0.1,
+                          y = total,
+                          label = paste0("In ", added_year, ", ",
+                                         scales::comma(total), " movies\n",
+                                         "and shows were added\nto Neflix.")),
+            color = netflix_grey,
+            hjust = 0,
+            vjust = 0.5,
+            family = font,
+            size = 4) +
   guides(color = FALSE) +
+  coord_cartesian(clip = "off") +
   scale_x_continuous(breaks = seq(from = 2008, to = 2020)) +
-  scale_y_continuous(breaks = seq(from = 200, to = 1400, by = 200),
-                     labels = scales::comma) +
-  scale_color_manual(values = c(netflix_red, white)) +
-  coord_cartesian(expand = FALSE,
-                  clip = "off") +
-  labs(title = "Number of movies and tv shows added to Netflix each year<br>",
-       caption = "Data: <b>Kaggle</b> | Viz: <b>Jenn Schilling</b>",
-       x = "",
+  labs(caption = "Data: <b>Kaggle</b> | Viz: <b>Jenn Schilling</b>",
+       x = "Line shows the total number of movies and tv shows added each year",
        y = "") +
   theme_bw() +
-  theme(axis.text = element_text(size = 9, color = white, family = font),
-        axis.line = element_line(color = white),
-        axis.ticks = element_line(color = white),
+  theme(axis.text = element_blank(),
+        axis.line = element_blank(),
+        axis.ticks = element_blank(),
+        
+        axis.title.x = element_text(size = 10, color = netflix_grey, 
+                                    family = font, hjust = 0),
         
         panel.border = element_blank(),
         panel.grid = element_blank(),
         
-        panel.background = element_rect(fill = black),
-        plot.background = element_rect(fill = black),
+        panel.background = element_rect(fill = black, color = NA),
+        plot.background = element_rect(fill = black, color = NA),
         
-        plot.margin = margin(t = 15, r = 45, b = 15, l = 15),
-        
-        plot.title.position = "plot",
-        plot.title = element_markdown(size = 12, color = white, family = font),
+        plot.margin = margin(t = 15, r = 65, b = 15, l = 45),
         
         plot.caption.position = "plot",
         plot.caption = element_markdown(size = 8, color = white, family = font))
@@ -140,5 +138,7 @@ line <- ggplot(data = netflix_agg_type,
 
 # Put plots together
 sankey / line +
-  theme(panel.background = element_rect(fill = black),
-        plot.background = element_rect(fill = black))
+  plot_layout(heights = c(3, 1)) +
+  plot_annotation(
+    theme = theme(panel.background = element_rect(fill = black),
+                  plot.background = element_rect(fill = black)))
