@@ -8,6 +8,7 @@ library(tidyverse)
 library(extrafont)
 library(ggtext)
 library(ggalluvial)
+library(patchwork)
 
 #### Data #### 
 
@@ -22,14 +23,15 @@ netflix_agg_type <- netflix_titles %>%
             .groups = 'drop') %>%
   group_by(added_year) %>%
   mutate(pct = num / sum(num),
-         added_year = parse_number(added_year))
+         added_year = parse_number(added_year)) %>%
+  filter(added_year <= 2020)
 
 # Labels
 type_labels <- tibble(
   x_prop = c(2007.7, 2007.7),
-  x_num = c(2021, 2021),
+  x_num = c(2020.1, 2020.1),
   y_prop = c(0.25, 0.75),
-  y_num = c(29, 88),
+  y_num = c(697, 1312),
   type = c("TV Show", "Movie"),
   label_prop = c("TV\nShow", "Movie"),
   label_num = c("TV Show", "Movie")
@@ -44,7 +46,7 @@ fontcolor <- "gray30"
 #### Plot ####
 
 # Sankey Flow Diagram of Proportion
-ggplot(data = netflix_agg_type,
+sankey <- ggplot(data = netflix_agg_type,
        mapping = aes(x = added_year,
                      y = pct,
                      stratum = type,
@@ -63,7 +65,7 @@ ggplot(data = netflix_agg_type,
             hjust = 1) +
   guides(fill = FALSE,
          color = FALSE) +
-  scale_x_continuous(breaks = seq(from = 2008, to = 2021)) +
+  scale_x_continuous(breaks = seq(from = 2008, to = 2020)) +
   scale_fill_manual(values = c("#db0000", "#000000")) +
   scale_color_manual(values = c("#db0000", "#000000")) +
   coord_cartesian(expand = FALSE,
@@ -73,7 +75,7 @@ ggplot(data = netflix_agg_type,
   theme_void() +
   theme(axis.text.x = element_text(size = 9, color = "#000000", family = font),
         
-        plot.margin = margin(t = 20, r = 45, b = 40, l = 45),
+        plot.margin = margin(t = 15, r = 45, b = 15, l = 45),
         
         plot.title.position = "plot",
         plot.title = element_markdown(size = 12, color = "#000000", family = font),
@@ -82,13 +84,13 @@ ggplot(data = netflix_agg_type,
         plot.caption = element_markdown(size = 8, color = "#000000", family = font))
 
 # Line graph of number 
-ggplot(data = netflix_agg_type,
+line <- ggplot(data = netflix_agg_type,
        mapping = aes(x = added_year,
                      y = num,
                      group = type,
                      color = type,
                      label = num)) +
-  geom_line(size = 2) +
+  geom_line(size = 1.5) +
   geom_text(data = type_labels,
             mapping = aes(x = x_num,
                           y = y_num,
@@ -98,16 +100,24 @@ ggplot(data = netflix_agg_type,
             size = 4,
             hjust = 0) +
   guides(color = FALSE) +
-  scale_x_continuous(breaks = seq(from = 2008, to = 2021)) +
+  scale_x_continuous(breaks = seq(from = 2008, to = 2020)) +
+  scale_y_continuous(breaks = seq(from = 200, to = 1400, by = 200),
+                     labels = scales::comma) +
   scale_color_manual(values = c("#db0000", "#000000")) +
   coord_cartesian(expand = FALSE,
                   clip = "off") +
   labs(title = "Number of movies and tv shows added to Netflix each year<br>",
-       caption = "Data: <b>Kaggle</b> | Viz: <b>Jenn Schilling</b>") +
-  theme_void() +
-  theme(axis.text.x = element_text(size = 9, color = "#000000", family = font),
+       caption = "Data: <b>Kaggle</b> | Viz: <b>Jenn Schilling</b>",
+       x = "",
+       y = "") +
+  theme_bw() +
+  theme(axis.text = element_text(size = 9, color = "#000000", family = font),
+        axis.line = element_line(),
         
-        plot.margin = margin(t = 20, r = 45, b = 40, l = 45),
+        panel.border = element_blank(),
+        panel.grid = element_blank(),
+        
+        plot.margin = margin(t = 15, r = 45, b = 15, l = 15),
         
         plot.title.position = "plot",
         plot.title = element_markdown(size = 12, color = "#000000", family = font),
@@ -116,4 +126,5 @@ ggplot(data = netflix_agg_type,
         plot.caption = element_markdown(size = 8, color = "#000000", family = font))
 
 
-
+# Put plots together
+sankey / line
