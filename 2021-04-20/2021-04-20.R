@@ -70,8 +70,7 @@ sankey <- ggplot(data = netflix_agg_type,
   scale_fill_manual(values = c(netflix_red, white)) +
   scale_color_manual(values = c(netflix_red, white)) +
   coord_cartesian(clip = "off") +
-  labs(title = "Neflix began adding many more movies and tv shows in 2016.<br>
-  Most new additions have been movies, especially in last four years.") +
+  labs(title = "Most new additions to Netflix have been movies. Netflix began adding many more movies and tv shows in 2016.") +
   theme_void() +
   theme(axis.text.x = element_text(size = 9, color = white, family = font),
         
@@ -104,24 +103,24 @@ line <- ggplot(data = netflix_agg_type %>%
                           y = total,
                           label = paste0("In ", added_year, ", ",
                                          scales::comma(total), " movies\n",
-                                         "and shows were added\nto Neflix.")),
+                                         "and tv shows were\nadded to Netflix.")),
             color = netflix_grey,
             hjust = 0,
             vjust = 0.5,
             family = font,
-            size = 4) +
+            size = 3) +
   guides(color = FALSE) +
   coord_cartesian(clip = "off") +
   scale_x_continuous(breaks = seq(from = 2008, to = 2020)) +
   labs(caption = "Data: <b>Kaggle</b> | Viz: <b>Jenn Schilling</b>",
-       x = "Line shows the total number of movies and tv shows added each year",
+       x = "Line shows the total number of movies and tv shows added each year.",
        y = "") +
   theme_bw() +
   theme(axis.text = element_blank(),
         axis.line = element_blank(),
         axis.ticks = element_blank(),
         
-        axis.title.x = element_text(size = 10, color = netflix_grey, 
+        axis.title.x = element_text(size = 8, color = netflix_grey, 
                                     family = font, hjust = 0),
         
         panel.border = element_blank(),
@@ -142,3 +141,12 @@ sankey / line +
   plot_annotation(
     theme = theme(panel.background = element_rect(fill = black),
                   plot.background = element_rect(fill = black)))
+
+# Save
+ggsave("2021-04-20\\netflix.png",
+       plot = last_plot(),
+       device = "png",
+       width = 10,
+       height = 5,
+       dpi = 300,
+       type = "cairo")
