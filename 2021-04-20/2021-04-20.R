@@ -43,6 +43,11 @@ type_labels <- tibble(
 font <- "Gill Sans MT"
 fontcolor <- "gray30"
 
+netflix_red <- "#db0000"
+netflix_grey <- "#564d4d"
+black <- "#000000"
+white <- "#ffffff"
+
 #### Plot ####
 
 # Sankey Flow Diagram of Proportion
@@ -66,22 +71,25 @@ sankey <- ggplot(data = netflix_agg_type,
   guides(fill = FALSE,
          color = FALSE) +
   scale_x_continuous(breaks = seq(from = 2008, to = 2020)) +
-  scale_fill_manual(values = c("#db0000", "#000000")) +
-  scale_color_manual(values = c("#db0000", "#000000")) +
+  scale_fill_manual(values = c(netflix_red, white)) +
+  scale_color_manual(values = c(netflix_red, white)) +
   coord_cartesian(expand = FALSE,
                   clip = "off") +
   labs(title = "Proportion of movies and tv shows added to Netflix each year<br>",
        caption = "Data: <b>Kaggle</b> | Viz: <b>Jenn Schilling</b>") +
   theme_void() +
-  theme(axis.text.x = element_text(size = 9, color = "#000000", family = font),
+  theme(axis.text.x = element_text(size = 9, color = white, family = font),
+        
+        panel.background = element_rect(fill = black),
+        plot.background = element_rect(fill = black),
         
         plot.margin = margin(t = 15, r = 45, b = 15, l = 45),
         
         plot.title.position = "plot",
-        plot.title = element_markdown(size = 12, color = "#000000", family = font),
+        plot.title = element_markdown(size = 12, color = white, family = font),
         
         plot.caption.position = "plot",
-        plot.caption = element_markdown(size = 8, color = "#000000", family = font))
+        plot.caption = element_markdown(size = 8, color = white, family = font))
 
 # Line graph of number 
 line <- ggplot(data = netflix_agg_type,
@@ -103,7 +111,7 @@ line <- ggplot(data = netflix_agg_type,
   scale_x_continuous(breaks = seq(from = 2008, to = 2020)) +
   scale_y_continuous(breaks = seq(from = 200, to = 1400, by = 200),
                      labels = scales::comma) +
-  scale_color_manual(values = c("#db0000", "#000000")) +
+  scale_color_manual(values = c(netflix_red, white)) +
   coord_cartesian(expand = FALSE,
                   clip = "off") +
   labs(title = "Number of movies and tv shows added to Netflix each year<br>",
@@ -111,20 +119,26 @@ line <- ggplot(data = netflix_agg_type,
        x = "",
        y = "") +
   theme_bw() +
-  theme(axis.text = element_text(size = 9, color = "#000000", family = font),
-        axis.line = element_line(),
+  theme(axis.text = element_text(size = 9, color = white, family = font),
+        axis.line = element_line(color = white),
+        axis.ticks = element_line(color = white),
         
         panel.border = element_blank(),
         panel.grid = element_blank(),
         
+        panel.background = element_rect(fill = black),
+        plot.background = element_rect(fill = black),
+        
         plot.margin = margin(t = 15, r = 45, b = 15, l = 15),
         
         plot.title.position = "plot",
-        plot.title = element_markdown(size = 12, color = "#000000", family = font),
+        plot.title = element_markdown(size = 12, color = white, family = font),
         
         plot.caption.position = "plot",
-        plot.caption = element_markdown(size = 8, color = "#000000", family = font))
+        plot.caption = element_markdown(size = 8, color = white, family = font))
 
 
 # Put plots together
-sankey / line
+sankey / line +
+  theme(panel.background = element_rect(fill = black),
+        plot.background = element_rect(fill = black))
