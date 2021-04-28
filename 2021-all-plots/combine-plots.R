@@ -34,10 +34,16 @@ row_4_21 <- image_append(
     image_border(image_resize(image_read("2021-03-23\\un_votes.png"), "500x400!"), color = "white", geometry = "10x10"),
     image_border(image_resize(image_read("2021-03-30\\foundation_shades.png"), "500x400!"), color = "white", geometry = "10x10")))
 
+row_5_21 <- image_append(
+  c(image_border(image_resize(image_read("2021-04-06\\percent_forest.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-04-20\\netflix.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-04-27\\ceo.png"), "500x400!"), color = "white", geometry = "10x10")))
+
 final_21 <- image_append(c(row_1_21,
                            row_2_21,
                            row_3_21,
-                           row_4_21),
+                           row_4_21,
+                           row_5_21),
                          stack = TRUE)
 
 image_write(final_21,
@@ -123,10 +129,16 @@ row_4 <- image_append(
     image_border(image_resize(image_read("2021-03-23\\un_votes.png"), "500x400!"), color = "white", geometry = "10x10"),
     image_border(image_resize(image_read("2021-03-30\\foundation_shades.png"), "500x400!"), color = "white", geometry = "10x10")))
 
+row_5 <- image_append(
+  c(image_border(image_resize(image_read("2021-04-06\\percent_forest.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-04-20\\netflix.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-04-27\\ceo.png"), "500x400!"), color = "white", geometry = "10x10")))
+
 final_together <- image_append(c(row_1,
                                  row_2,
                                  row_3,
-                                 row_4),
+                                 row_4,
+                                 row_5),
                                stack = TRUE)
 
 image_write(final_together,
