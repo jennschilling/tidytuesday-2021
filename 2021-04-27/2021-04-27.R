@@ -7,11 +7,27 @@
 library(tidyverse)
 library(extrafont)
 library(ggtext)
-library(patchwork)
+library(tidytext)
 
 #### Data #### 
 
 departures <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-04-27/departures.csv')
+
+departure_reason <- departures %>%
+  mutate(notes = gsub('[[:digit:]]+', '', notes)) %>% # remove numbers from notes
+  unnest_tokens(word, notes) %>%
+  anti_join(stop_words, by = "word") %>% # remove stop words from tokens
+  anti_join(tibble(word = tolower(month.name)), by = "word") %>% # remove month names from tokens
+  anti_join(tibble(word = tolower(month.abb)), by = "word") 
+
+departure_reason_agg <- departure_reason %>%
+  filter(str_detect(string = word, 
+                    pattern = "ceo|chairman|executive|president|chief|board|officer|company|corporation|director|corp|c.e.o", 
+                    negate = TRUE)) %>%
+  group_by(departure_code, word) %>%
+  summarise(n = n(),
+            .groups = "drop") %>%
+  filter(n >= 50)
 
 
 #### Formatting ####
