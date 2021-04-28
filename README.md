@@ -2,6 +2,9 @@
 
 Data visualizations developed in R using data from [#TidyTuesday 2021](https://github.com/rfordatascience/tidytuesday/tree/master/data/2021).
 
+# 27 April 2021
+![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-04-27/ceo.png)
+
 # 20 April 2021
 ![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-04-20/netflix.png)
 
