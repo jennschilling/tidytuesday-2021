@@ -10,6 +10,7 @@ library(maps)
 library(gganimate)
 library(ggtext)
 library(jsonlite)
+library(grid)
 
 #### Data #### 
 
@@ -48,32 +49,57 @@ az <- map_data('state') %>%
   filter(region == 'arizona')
 
 # Native Land (https://native-land.ca/)
-
 territories <- fromJSON("https://native-land.ca/coordinates/indigenousTerritories.json")
 
 # Transform JSON to Data Frame
+
+# Put properties and coordinates together
 territories_comb <- bind_cols(territories$features$properties, territories$features$geometry)
 
-territories_df <- territories_comb %>%
-  unnest(., coordinates) %>%
-  unnest(., coordinates) %>%
-  separate(coordinates, into = c("long", "lat"), sep = ",") %>%
-  mutate(lat = parse_number(lat),
-         long = parse_number(long)) %>%
-  janitor::clean_names()
+# Create empty data frame for coordinate data
+territories_coords <- territories_comb[FALSE,] %>%
+  select(-coordinates, -type)
+
+# Separate out coordinate data (note this loop takes quite awhile to run)
+for(i in 1:nrow(territories_comb)){
+  
+  # Get properties
+  row_info <- territories_comb[i, 1:6]
+  
+  # Get coordinates
+  coord <- territories_comb$coordinates[[i]]
+  
+  num_coords <- ncol(coord)
+  
+  # Separate coordinates
+  long <- coord[1, 1:num_coords, 1]
+  lat <- coord[1, 1:num_coords, 2]
+
+  # Put coordinates in a data frame
+  for(j in 1:num_coords){
+    long_lat <- tibble(long = long[j],
+                       lat = lat[j])
+    coord_add <- bind_cols(row_info, long_lat)
+    territories_coords <- bind_rows(territories_coords, coord_add)
+  }
+
+  
+}
+
+# Clean up column names
+territories_coords <- janitor::clean_names(territories_coords)
 
 # Get Arizona Lands
-territories_az_names <- territories_df %>%
+territories_az_names <- territories_coords %>%
   filter(long >= min(az$long) & long <= max(az$long) &
            lat >= min(az$lat) & lat <= max(az$lat)) %>%
   select(name) %>%
   unique(.)
 
-territories_az <- left_join(territories_az_names, territories_df, by = "name") %>%
+territories_az <- left_join(territories_az_names, territories_coords, by = "name") %>%
   mutate(color = ifelse(color == "https://native-land.ca/maps/territories/hia-ced-oodham/", "#2b8cbe", color))
 
-# Tribal Lands Current
-
+# Tribal Lands Current - not using at the moment
 tribal_lands <- fromJSON("https://opendata.arcgis.com/datasets/7ae6552b43984219a2791879a83e2baa_27.geojson")
 
 #### Formatting ####
@@ -101,7 +127,7 @@ theme_map <- function(base_size = 9, base_family = font) {
         plot.subtitle = element_markdown(size = 10, color = fontcolor),
         
         plot.caption.position = "plot",
-        plot.caption = element_markdown(size = 8, color = fontcolor),
+        plot.caption = element_text(size = 8, color = fontcolor),
         
         plot.margin = margin(t = 15, r = 15, b = 15, l = 15)
   )
@@ -125,7 +151,7 @@ p <- ggplot(data = post_offices_az_long,
                alpha = 0,
                color = fontcolor,
                size = 1) +
-  guides(fill = FALSE) +
+  #guides(fill = FALSE) +
   scale_fill_identity(breaks = territories_az$color,
                       labels = territories_az$name,
                       guide = "legend") +
