@@ -104,7 +104,7 @@ tribal_lands <- fromJSON("https://opendata.arcgis.com/datasets/7ae6552b43984219a
 
 #### Formatting ####
 
-font <- "Gill Sans MT"
+font <- "Calibri"
 fontcolor <- "gray30"
 
 # Theme Map from Data Visualization by Kieran Healy (Princeton University Press, 2019)
@@ -122,19 +122,24 @@ theme_map <- function(base_size = 9, base_family = font) {
         plot.background=element_blank(),
         
         plot.title.position = "plot",
-        plot.title = element_markdown(size = 12, color = fontcolor),
+        plot.title = element_markdown(size = 12, family = font, color = fontcolor),
         
-        plot.subtitle = element_markdown(size = 10, color = fontcolor),
+        plot.subtitle = element_markdown(size = 10, family = font, color = fontcolor),
         
         plot.caption.position = "plot",
-        plot.caption = element_text(size = 8, color = fontcolor),
+        plot.caption = element_text(size = 8, family = font, color = fontcolor),
         
-        plot.margin = margin(t = 15, r = 15, b = 15, l = 15)
+        plot.margin = margin(t = 15, r = 15, b = 15, l = 15),
+        
+        legend.position = "bottom",
+        legend.text = element_text(family = font, color = fontcolor),
+        legend.title = element_text(family = font, color = fontcolor)
   )
 }
 
 #### Make Map ####
 
+# Make Plot
 p <- ggplot(data = post_offices_az_long,
        mapping = aes(x = longitude,
                      y = latitude)) +
@@ -151,10 +156,12 @@ p <- ggplot(data = post_offices_az_long,
                alpha = 0,
                color = fontcolor,
                size = 1) +
-  #guides(fill = FALSE) +
   scale_fill_identity(breaks = territories_az$color,
                       labels = territories_az$name,
-                      guide = "legend") +
+                      guide = guide_legend(nrow = 8,
+                                           title.position = "top",
+                                           title.theme = element_text(family = font,
+                                                                      color = fontcolor))) +
   geom_point(show.legend = FALSE) +
   coord_map() +
   theme_map() +
@@ -164,13 +171,22 @@ p <- ggplot(data = post_offices_az_long,
   labs(title = 'Post Offices in Arizona',
        subtitle = 'Year: {current_frame}',
        fill = "Native Territory",
-       caption = "Native Territory sourced from https://native-land.ca/"
+       caption = "Data Viz by Jenn Schilling\nNative Territory sourced from https://native-land.ca/\nPost Office data from Blevins, Cameron; Helbock, Richard W., 2021, US Post Offices,\nhttps://doi.org/10.7910/DVN/NUKCNA, Harvard Dataverse, V1, UNF:6:8ROmiI5/4qA8jHrt62PpyA== [fileUNF]"
        )
 
+# Animate
 # Source: https://stackoverflow.com/questions/56447125/gganimate-not-showing-all-frames
+# Note: This takes awhile to run
 animate(
   plot = p,
   nframes = length(unique(post_offices_az_long$year)),
   fps = 4,
-  end_pause = 8
+  end_pause = 8,
+  height = 600,
+  width = 800
 )
+
+# Save
+# Note: This takes awhile to run (and has not run completely yet)
+anim_save(filename = "2021-04-13\\post_offices.gif", 
+          animation = last_animation())
