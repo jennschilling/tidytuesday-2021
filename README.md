@@ -8,6 +8,9 @@ Data visualizations developed in R using data from [#TidyTuesday 2021](https://g
 # 20 April 2021
 ![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-04-20/netflix.png)
 
+# 13 April 2021
+![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-04-13/post_offices.gif)
+
 # 06 April 2021
 ![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-04-06/percent_forest.png)
 
