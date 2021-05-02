@@ -144,7 +144,7 @@ p <- ggplot(data = post_offices_az_long,
        mapping = aes(x = longitude,
                      y = latitude)) +
   geom_polygon(data = territories_az %>% 
-                 filter(!(name == "Jumanos" & lat < 34)),
+                 filter(!(name == "Jumanos" & lat < 34)), # remove territory that is far outside current Arizona
                mapping = aes(x = long,
                              y = lat,
                              group = name, 
