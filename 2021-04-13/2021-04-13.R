@@ -131,7 +131,7 @@ theme_map <- function(base_size = 9, base_family = font) {
         
         plot.margin = margin(t = 15, r = 15, b = 15, l = 15),
         
-        legend.position = "bottom",
+        legend.position = "left",
         legend.text = element_text(family = font, color = fontcolor),
         legend.title = element_text(family = font, color = fontcolor)
   )
@@ -143,7 +143,8 @@ theme_map <- function(base_size = 9, base_family = font) {
 p <- ggplot(data = post_offices_az_long,
        mapping = aes(x = longitude,
                      y = latitude)) +
-  geom_polygon(data = territories_az,
+  geom_polygon(data = territories_az %>% 
+                 filter(!(name == "Jumanos" & lat < 34)),
                mapping = aes(x = long,
                              y = lat,
                              group = name, 
@@ -158,7 +159,7 @@ p <- ggplot(data = post_offices_az_long,
                size = 1) +
   scale_fill_identity(breaks = territories_az$color,
                       labels = territories_az$name,
-                      guide = guide_legend(nrow = 8,
+                      guide = guide_legend(ncol = 3,
                                            title.position = "top",
                                            title.theme = element_text(family = font,
                                                                       color = fontcolor))) +
@@ -182,8 +183,8 @@ animate(
   nframes = length(unique(post_offices_az_long$year)),
   fps = 4,
   end_pause = 8,
-  height = 600,
-  width = 800
+  height = 400,
+  width = 700
 )
 
 # Save
