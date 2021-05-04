@@ -12,6 +12,10 @@ library(ggtext)
 
 water <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-05-04/water.csv')
 
+uganda <- water %>%
+  filter(country_name == "Uganda") %>%
+  mutate(report_year = parse_number(str_sub(report_date, start = 7, end = 10)))
+
 #### Formatting ####
 
 font <- "Calibri"
@@ -34,3 +38,11 @@ theme_update(
 )
 
 #### Plot ####
+
+ggplot(data = uganda %>% filter(!is.na(install_year)),
+       mapping = aes(x = install_year,
+                     y = report_year,
+                     color = water_source)) +
+  geom_point() +
+  facet_wrap(~ water_source) +
+  guides(color = FALSE)
