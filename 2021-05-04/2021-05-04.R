@@ -14,7 +14,18 @@ water <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday
 
 uganda <- water %>%
   filter(country_name == "Uganda") %>%
-  mutate(report_year = parse_number(str_sub(report_date, start = 7, end = 10)))
+  mutate(report_year = parse_number(str_sub(report_date, start = 7, end = 10)),
+         bin_install_year = cut(install_year, breaks = 5, dig.lab = 4),
+         bin_report_year = cut(report_year, breaks = 5, dig.lab = 4))
+
+# Latitude and Longitude data does not seem reliable - need to figure out a different viz
+
+uganda_map <- map_data(map = "world") %>%
+  filter(region == "Uganda")
+
+uganda_clean <- uganda %>%
+  filter(lat_deg <= max(uganda_map$lat) & lat_deg >= min(uganda_map$lat) &
+           lon_deg <= max(uganda_map$long) & lon_deg >= min(uganda_map$long))
 
 #### Formatting ####
 
@@ -43,6 +54,22 @@ ggplot(data = uganda %>% filter(!is.na(install_year)),
        mapping = aes(x = install_year,
                      y = report_year,
                      color = water_source)) +
-  geom_point() +
+  geom_jitter() +
   facet_wrap(~ water_source) +
   guides(color = FALSE)
+
+ggplot() +
+  geom_point(data = uganda_clean,
+             mapping = aes(x = lon_deg,
+                           y = lat_deg,
+                           color = water_source)) +
+  geom_polygon(data = uganda_map,
+               mapping = aes(x = long,
+                             y = lat,
+                             group = group),
+               fill = NA,
+               color = fontcolor) +
+  coord_map(projection = "albers",
+            lat0 = 1,
+            lat1 = 4) +
+  facet_wrap(~ bin_install_year)
