@@ -13,6 +13,7 @@ library(ggalluvial)
 
 water <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-05-04/water.csv')
 
+# Get the percent of water points by water source and year
 water_alluvial <- water %>% 
   filter(install_year <= 2021) %>%
   filter(!is.na(water_source)) %>%
@@ -22,6 +23,7 @@ water_alluvial <- water %>%
   group_by(install_year) %>%
   mutate(pct = total / sum(total)) %>%
   select(-total) %>%
+  # Fill in with 0s so there is data for every water source and year combination
   pivot_wider(names_from = "water_source",
               values_from = "pct") %>%
   pivot_longer(-install_year,
@@ -34,19 +36,6 @@ water_alluvial <- water %>%
 
 font <- "Calibri"
 fontcolor <- "gray30"
-
-#### Plot ####
-
-ggplot(data = water %>% filter(install_year <= 2021),
-       mapping = aes(y = install_year,
-                     fill = water_source)) +
-  geom_bar()
-
-ggplot(data = water_alluvial %>% filter(install_year >= 1950),
-       mapping = aes(x = install_year,
-                     y = pct,
-                     fill = water_source)) +
-  geom_area(color = "black") 
 
 #### Art ####
 
