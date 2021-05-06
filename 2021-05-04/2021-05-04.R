@@ -71,7 +71,7 @@ ggplot() +
   labs(caption = "**Data:** Water Point Data Exchange | **Design**: Jenn Schilling") +
   theme_void() +
   theme(plot.caption.position = "plot",
-        plot.caption = element_markdown(size = 7, color = fontcolor),
+        plot.caption = element_markdown(size = 6, color = fontcolor),
         
         plot.margin = margin(t = 15, r = 15, b = 15, l = 15))
 
@@ -80,6 +80,6 @@ ggsave("2021-05-04\\water_art.png",
        plot = last_plot(),
        device = "png",
        type = "cairo", 
-       width = 8,
-       height = 8,
-       dpi = 300)
+       width = 5,
+       height = 5,
+       dpi = 500)
