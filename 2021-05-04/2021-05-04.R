@@ -35,22 +35,6 @@ water_alluvial <- water %>%
 font <- "Calibri"
 fontcolor <- "gray30"
 
-theme_set(theme_minimal(base_size = 12, base_family = font))
-
-theme_update(
-  panel.grid.minor = element_blank(),
-  
-  axis.text = element_text(size = 7, color = fontcolor),
-  
-  plot.title.position = "plot",
-  plot.title = element_markdown(size = 10, color = fontcolor),
-  
-  plot.caption.position = "plot",
-  plot.caption = element_markdown(size = 7, color = fontcolor),
-  
-  plot.margin = margin(t = 15, r = 15, b = 15, l = 15)
-)
-
 #### Plot ####
 
 ggplot(data = water %>% filter(install_year <= 2021),
@@ -61,13 +45,41 @@ ggplot(data = water %>% filter(install_year <= 2021),
 ggplot(data = water_alluvial %>% filter(install_year >= 1950),
        mapping = aes(x = install_year,
                      y = pct,
-                     alluvium = water_source,
-                     fill = water_source)) +
-  geom_alluvium() +
-  scale_fill_brewer()
-
-ggplot(data = water_alluvial %>% filter(install_year >= 1950),
-       mapping = aes(x = install_year,
-                     y = pct,
                      fill = water_source)) +
   geom_area(color = "black") 
+
+#### Art ####
+
+ggplot() +
+  geom_alluvium(data = water_alluvial %>% filter(install_year >= 1950 & install_year <= 2020),
+                mapping = aes(x = install_year,
+                              y = pct,
+                              alluvium = water_source,
+                              fill = water_source),
+                alpha = 0.7,
+                curve_type = "cubic",
+                color = NA) +
+  # Colors from https://colorbrewer2.org/#type=sequential&scheme=Blues&n=9
+  scale_fill_manual(values = c("#ffffff", "#deebf7", "#c6dbef", "#9ecae1", 
+                               "#6baed6", "#4292c6", "#2171b5", "#08519c",
+                               "#08306b", "#ffffff", "#ffffff", "#ffffff")) +
+  coord_polar(theta = "y",
+              clip = "off",
+              start = 0,
+              direction = -1) +
+  guides(fill = FALSE) +
+  labs(caption = "**Data:** Water Point Data Exchange | **Design**: Jenn Schilling") +
+  theme_void() +
+  theme(plot.caption.position = "plot",
+        plot.caption = element_markdown(size = 7, color = fontcolor),
+        
+        plot.margin = margin(t = 15, r = 15, b = 15, l = 15))
+
+
+ggsave("2021-05-04\\water_art.png",
+       plot = last_plot(),
+       device = "png",
+       type = "cairo", 
+       width = 8,
+       height = 8,
+       dpi = 300)
