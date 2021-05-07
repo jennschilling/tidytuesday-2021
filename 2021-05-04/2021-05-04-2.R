@@ -35,7 +35,7 @@ ggplot(data = water %>% sample_n(100000),
                      yend = -lat_deg,
                      color = water_source)) +
   geom_segment() +
-  coord_polar() +
+ # coord_polar() +
   guides(color = FALSE)
 
 
