@@ -8,7 +8,6 @@ library(tidyverse)
 library(extrafont)
 library(ggtext)
 library(maps)
-library(scales)
 
 #### Data #### 
 
