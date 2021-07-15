@@ -37,3 +37,73 @@ theme_update(
   
   plot.margin = margin(t = 10, r = 10, b = 10, l = 10)
 )
+
+#### Subset Data ####
+
+us_survey <- survey %>%
+  mutate(country = tolower(country)) %>%
+  filter(country %in% c('usa', 'us', 'united states', 'united states of america') &
+           currency == 'USD' &
+           industry %in% c('Computing or Tech',
+                           'Law',
+                           'Business or Consulting',
+                           'Engineering or Manufacturing',
+                           'Accounting, Banking & Finance',
+                           'Health care',
+                           'Marketing, Advertising & PR',
+                           'Media & Digital',
+                           'Government and Public Administration',
+                           'Nonprofits',
+                           'Education (Higher Education)',
+                           'Education (Primary/Secondary)') &
+           !is.na(gender)) %>%
+  mutate(gender = factor(gender,
+                         levels = c('Other or prefer not to answer',
+                                    'Non-binary', 
+                                    'Woman',
+                                    'Man'))) %>%
+  mutate(race = str_replace(race, 'Hispanic, Latino, or Spanish origin', 'Hispanic/Latino'),
+         race_agg = ifelse(str_detect(race, ','), 'Two or more races', race),
+         race_agg = ifelse(is.na(race_agg), 'Not reported', race_agg))
+  
+us_survey_agg <- us_survey %>%
+  mutate(race_sep = race) %>%
+  separate(race_sep,
+           c('race_1', 'race_2', 'race_3', 'race_4'),
+           sep = ', ') %>%
+  pivot_longer(race_1:race_4, 
+               values_to = 'race_all',
+               values_drop_na = TRUE) %>%
+  select(-name) %>%
+  group_by(industry, gender, race_all) %>%
+  summarise(median_salary = median(annual_salary),
+            n = n(),
+            .groups = 'drop')
+
+us_survey_agg_gender <- us_survey %>%
+  group_by(industry, gender) %>%
+  summarise(median_salary = median(annual_salary),
+            n = n(),
+            .groups = 'drop')
+
+
+#### Graph Data ####
+
+ggplot(data = us_survey) +
+  geom_boxplot(mapping = aes(x = annual_salary,
+                             color = gender)) +
+  facet_wrap(~reorder(industry, -annual_salary),
+             scales = 'free') +
+  scale_x_continuous(labels = scales::dollar_format(scale = 1e-3,
+                                                    suffix = "K"))
+  coord_cartesian(clip = "off",
+                  expand = FALSE) +
+  theme(axis.text.y = element_blank())
+  
+  
+ggplot(data = us_survey_agg) +
+  geom_point(mapping = aes(x = median_salary,
+                           y = industry,
+                           color = gender)) +
+  facet_wrap(~race_all)
+
