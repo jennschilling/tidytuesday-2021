@@ -62,7 +62,7 @@ us_survey <- survey %>%
                                     'Non-binary', 
                                     'Woman',
                                     'Man'))) %>%
-  mutate(race = str_replace(race, 'Hispanic, Latino, or Spanish origin', 'Hispanic/Latino'),
+  mutate(race = str_replace(race, 'Hispanic, Latino, or Spanish origin', 'Hispanic or Latino'),
          race_agg = ifelse(str_detect(race, ','), 'Two or more races', race),
          race_agg = ifelse(is.na(race_agg), 'Not reported', race_agg))
   
@@ -101,9 +101,40 @@ ggplot(data = us_survey) +
   theme(axis.text.y = element_blank())
   
   
-ggplot(data = us_survey_agg) +
-  geom_point(mapping = aes(x = median_salary,
-                           y = industry,
+point_data <- us_survey_agg %>%
+  filter(race_all != 'Another option not listed here or prefer not to answer') %>%
+  filter(race_all != 'Middle Eastern or Northern African') %>%
+  filter(gender != 'Other or prefer not to answer') %>%
+  filter(gender != 'Non-binary') %>%
+  filter(n > 1) %>%
+  mutate(race_all = factor(race_all,
+                           levels = c('White',
+                                      'Asian or Asian American',
+                                      'Black or African American',
+                                      'Hispanic or Latino',
+                                      'Native American or Alaska Native')))
+
+line_data <- point_data %>%
+  group_by(industry, race_all) %>%
+  summarise(min_med_salary = min(median_salary),
+            max_med_salary = max(median_salary),
+            .groups = 'drop')
+
+ggplot() +
+  geom_point(data = point_data,
+             mapping = aes(x = median_salary,
+                           y = race_all,
                            color = gender)) +
-  facet_wrap(~race_all)
+  geom_segment(data = line_data,
+               mapping = aes(x = min_med_salary, 
+                             xend = max_med_salary,
+                             y = race_all,
+                             yend = race_all)) +
+  scale_x_continuous(labels = scales::dollar) +
+  scale_y_discrete() +
+  facet_wrap(~industry,
+             ncol = 2,
+             scales = 'free_y') +
+  theme(panel.grid.major = element_blank())
+
 
