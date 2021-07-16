@@ -27,6 +27,9 @@ theme_update(
   
   strip.text = element_text(size = 10, color = fontcolor, hjust = 0),
   
+  legend.text = element_text(size = 10, color = fontcolor),
+  legend.title = element_text(size = 10, color = fontcolor),
+  
   plot.title.position = "plot",
   plot.title = element_markdown(size = 12, color = fontcolor),
   
@@ -87,7 +90,7 @@ us_survey_agg_gender <- us_survey %>%
             .groups = 'drop')
 
 
-#### Graph Data ####
+#### Explore Data ####
 
 ggplot(data = us_survey) +
   geom_boxplot(mapping = aes(x = annual_salary,
@@ -100,6 +103,8 @@ ggplot(data = us_survey) +
                   expand = FALSE) +
   theme(axis.text.y = element_blank())
   
+  
+#### Graph Data ####
   
 point_data <- us_survey_agg %>%
   filter(race_all != 'Another option not listed here or prefer not to answer') %>%
@@ -131,10 +136,17 @@ ggplot() +
                              y = race_all,
                              yend = race_all)) +
   scale_x_continuous(labels = scales::dollar) +
-  scale_y_discrete() +
+  scale_color_manual(labels = c('Female', 'Male'),
+                     values = c('#7570b3', '#1b9e77')) +
   facet_wrap(~industry,
              ncol = 2,
              scales = 'free_y') +
-  theme(panel.grid.major = element_blank())
+  guides(color = guide_legend(title.position =  "top")) +
+  labs(x = "Median Salary",
+       y = "",
+       color = "Gender") +
+  theme(panel.grid.major = element_blank(),
+        legend.position = "top",
+        legend.justification = "left")
 
 
