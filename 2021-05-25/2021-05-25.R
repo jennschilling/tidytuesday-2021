@@ -51,8 +51,19 @@ theme_update(
   plot.margin = margin(t = 10, r = 10, b = 10, l = 10)
 )
 
+# Color Paletter
 
-ggplot(data = drivers,
-       mapping = aes(x = year,
-                     y = records)) +
-  geom_point()
+# Generated from the Tidy Tuesday ReadMe image using https://color.adobe.com/create/image
+
+mario_colors <- c("#A60815", "#193073", "#F2E205", "#F2BD1D", "#F21B1B", # Colorful
+                  "#A69296", "#F294C0", "#F2EEB6", "#F2BE22", "#F27E63") # Muted 
+
+### Plot ###
+
+ggplot(data = records %>% filter(type == "Single Lap"),
+       mapping = aes(x = date,
+                     y = time,
+                     group = track)) +
+  geom_line() + 
+  facet_wrap(~track,
+             scales = "free_y")
