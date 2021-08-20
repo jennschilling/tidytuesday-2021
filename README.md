@@ -2,6 +2,9 @@
 
 Data visualizations developed in R using data from [#TidyTuesday 2021](https://github.com/rfordatascience/tidytuesday/tree/master/data/2021).
 
+# 25 May 2021
+![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-05-25/mario_kart.png)
+
 # 18 May 2021
 ![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-05-18/us_salaries.png)
 
