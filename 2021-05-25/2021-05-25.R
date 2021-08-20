@@ -30,10 +30,12 @@ theme_set(theme_minimal(base_size = 12, base_family = font))
 
 theme_update(
   panel.grid.minor = element_blank(),
-#  panel.grid.major = element_blank(),
+  panel.grid.major = element_blank(),
   
   axis.title = element_text(size = 10, color = fontcolor),
   axis.text = element_text(size = 9, color = fontcolor),
+  axis.line = element_line(color = fontcolor),
+  axis.ticks = element_line(color = fontcolor),
   
   strip.text = element_text(size = 10, color = fontcolor, hjust = 0),
   
@@ -60,10 +62,21 @@ mario_colors <- c("#A60815", "#193073", "#F2E205", "#F2BD1D", "#F21B1B", # Color
 
 ### Plot ###
 
-ggplot(data = records %>% filter(type == "Single Lap"),
+single_lap_records <- records %>% filter(type == "Single Lap")
+
+ggplot(data = single_lap_records,
        mapping = aes(x = date,
                      y = time,
                      group = track)) +
-  geom_line() + 
+  geom_line(color = fontcolor,
+            size = 1) +
   facet_wrap(~track,
              scales = "free_y")
+
+set.seed(123)
+ggplot(data = single_lap_records,
+       mapping = aes(x = record_duration,
+                     y = fct_rev(track))) +
+  geom_jitter(alpha = 0.5,
+              color = fontcolor,
+              height = 0.2)
