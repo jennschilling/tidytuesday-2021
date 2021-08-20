@@ -5,6 +5,9 @@
 #### Libraries ####
 
 library(tidyverse)
+library(gghalves)
+library(forcats)
+library(scales)
 library(extrafont)
 library(ggtext)
 
@@ -21,9 +24,14 @@ theme_set(theme_minimal(base_size = 12, base_family = font))
 
 theme_update(
   panel.grid.minor = element_blank(),
+  panel.grid.major = element_blank(),
   
   axis.title = element_text(size = 10, color = fontcolor),
-  axis.text = element_text(size = 9, color = fontcolor),
+  axis.text.x = element_text(size = 9, color = fontcolor),
+  axis.text.y = element_blank(),
+  
+  axis.line.x = element_blank(),
+  axis.ticks.x = element_line(color = fontcolor),
   
   strip.text = element_text(size = 10, color = fontcolor, hjust = 0),
   
@@ -69,84 +77,55 @@ us_survey <- survey %>%
          race_agg = ifelse(str_detect(race, ','), 'Two or more races', race),
          race_agg = ifelse(is.na(race_agg), 'Not reported', race_agg))
   
-us_survey_agg <- us_survey %>%
-  mutate(race_sep = race) %>%
-  separate(race_sep,
-           c('race_1', 'race_2', 'race_3', 'race_4'),
-           sep = ', ') %>%
-  pivot_longer(race_1:race_4, 
-               values_to = 'race_all',
-               values_drop_na = TRUE) %>%
-  select(-name) %>%
-  group_by(industry, gender, race_all) %>%
-  summarise(median_salary = median(annual_salary),
-            n = n(),
-            .groups = 'drop')
-
-us_survey_agg_gender <- us_survey %>%
-  group_by(industry, gender) %>%
-  summarise(median_salary = median(annual_salary),
-            n = n(),
-            .groups = 'drop')
-
-
-#### Explore Data ####
-
-ggplot(data = us_survey) +
-  geom_boxplot(mapping = aes(x = annual_salary,
-                             color = gender)) +
-  facet_wrap(~reorder(industry, -annual_salary),
-             scales = 'free') +
-  scale_x_continuous(labels = scales::dollar_format(scale = 1e-3,
-                                                    suffix = "K"))
-  coord_cartesian(clip = "off",
-                  expand = FALSE) +
-  theme(axis.text.y = element_blank())
-  
-  
 #### Graph Data ####
-  
-point_data <- us_survey_agg %>%
-  filter(race_all != 'Another option not listed here or prefer not to answer') %>%
-  filter(race_all != 'Middle Eastern or Northern African') %>%
-  filter(gender != 'Other or prefer not to answer') %>%
-  filter(gender != 'Non-binary') %>%
-  filter(n > 1) %>%
-  mutate(race_all = factor(race_all,
-                           levels = c('White',
-                                      'Asian or Asian American',
-                                      'Black or African American',
-                                      'Hispanic or Latino',
-                                      'Native American or Alaska Native')))
 
-line_data <- point_data %>%
-  group_by(industry, race_all) %>%
-  summarise(min_med_salary = min(median_salary),
-            max_med_salary = max(median_salary),
-            .groups = 'drop')
-
-ggplot() +
-  geom_point(data = point_data,
-             mapping = aes(x = median_salary,
-                           y = race_all,
-                           color = gender)) +
-  geom_segment(data = line_data,
-               mapping = aes(x = min_med_salary, 
-                             xend = max_med_salary,
-                             y = race_all,
-                             yend = race_all)) +
-  scale_x_continuous(labels = scales::dollar) +
-  scale_color_manual(labels = c('Female', 'Male'),
-                     values = c('#7570b3', '#1b9e77')) +
-  facet_wrap(~industry,
-             ncol = 2,
-             scales = 'free_y') +
-  guides(color = guide_legend(title.position =  "top")) +
-  labs(x = "Median Salary",
+ggplot(data = us_survey,
+       mapping = aes(y = annual_salary,
+                     x = fct_rev(industry),
+                     color = industry,
+                     fill = industry)) +
+  geom_half_violin(side = "r") +
+  geom_half_point(shape = 39,
+                  range_scale = 0,
+                  size = 4,
+                  side = "l") +
+  geom_text(data = us_survey %>% 
+              group_by(industry) %>%
+              summarise(max_salary = max(annual_salary),
+                        .groups = "drop") %>%
+              mutate(max_salary = case_when(
+                industry == "Education (Higher Education)" ~ max_salary * 1.2,
+                industry == "Education (Primary/Secondary)" ~ max_salary * 1.43,
+                TRUE ~ max_salary)),
+            mapping = aes(y = max_salary,
+                          x = fct_rev(industry),
+                          color = industry,
+                          label = industry),
+            family = font,
+            hjust =  1,
+            vjust = -0.5) +
+  scale_y_continuous(labels = dollar_format(),
+                     limits = c(0, 2e6),
+                     breaks = seq(from = 0, to = 2e6, by = 250000)) +
+  scale_color_manual(values = c("#208eb7", "#1c4c5e", "#7ec993", "#1c5f1e", 
+                                "#9bc732", "#5826a6", "#bcaff9", "#5064be", 
+                                "#cd49dc", "#af2168", "#f372a8", "#7b3f5b")) +
+  scale_fill_manual(values = c("#208eb7", "#1c4c5e", "#7ec993", "#1c5f1e", 
+                               "#9bc732", "#5826a6", "#bcaff9", "#5064be", 
+                               "#cd49dc", "#af2168", "#f372a8", "#7b3f5b")) +
+  coord_flip() +
+  guides(color = "none",
+         fill = "none") +
+  labs(title = "Annual salary in the United States by Industry",
+       x = "",
        y = "",
-       color = "Gender") +
-  theme(panel.grid.major = element_blank(),
-        legend.position = "top",
-        legend.justification = "left")
+       caption = "**Data:** Ask a Manager Salary Survey | **Design**: Jenn Schilling") 
 
+ggsave("2021-05-18\\us_salaries.png",
+       plot = last_plot(),
+       device = "png",
+       type = "cairo", 
+       width = 5,
+       height = 7,
+       dpi = 300)
 
