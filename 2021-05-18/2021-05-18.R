@@ -125,7 +125,7 @@ ggsave("2021-05-18\\us_salaries.png",
        plot = last_plot(),
        device = "png",
        type = "cairo", 
-       width = 5,
-       height = 7,
+       width = 7,
+       height = 9,
        dpi = 300)
 
