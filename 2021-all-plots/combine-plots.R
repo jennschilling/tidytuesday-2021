@@ -37,13 +37,20 @@ row_4_21 <- image_append(
 row_5_21 <- image_append(
   c(image_border(image_resize(image_read("2021-04-06\\percent_forest.png"), "500x400!"), color = "white", geometry = "10x10"),
     image_border(image_resize(image_read("2021-04-20\\netflix.png"), "500x400!"), color = "white", geometry = "10x10"),
-    image_border(image_resize(image_read("2021-04-27\\ceo.png"), "500x400!"), color = "white", geometry = "10x10")))
+    image_border(image_resize(image_read("2021-04-27\\ceo.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-05-04\\water_art.png"), "500x400!"), color = "white", geometry = "10x10")))
+
+row_6_21 <- image_append(
+  c(image_border(image_resize(image_read("2021-05-11\\az_broadband.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-05-18\\us_salaries.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-05-25\\mario_kart.png"), "500x400!"), color = "white", geometry = "10x10")))
 
 final_21 <- image_append(c(row_1_21,
                            row_2_21,
                            row_3_21,
                            row_4_21,
-                           row_5_21),
+                           row_5_21,
+                           row_6_21),
                          stack = TRUE)
 
 image_write(final_21,
@@ -132,7 +139,11 @@ row_4 <- image_append(
 row_5 <- image_append(
   c(image_border(image_resize(image_read("2021-04-06\\percent_forest.png"), "500x400!"), color = "white", geometry = "10x10"),
     image_border(image_resize(image_read("2021-04-20\\netflix.png"), "500x400!"), color = "white", geometry = "10x10"),
-    image_border(image_resize(image_read("2021-04-27\\ceo.png"), "500x400!"), color = "white", geometry = "10x10")))
+    image_border(image_resize(image_read("2021-04-27\\ceo.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-05-04\\water_art.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-05-11\\az_broadband.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-05-18\\us_salaries.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-05-25\\mario_kart.png"), "500x400!"), color = "white", geometry = "10x10")))
 
 final_together <- image_append(c(row_1,
                                  row_2,
