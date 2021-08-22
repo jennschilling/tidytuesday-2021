@@ -26,11 +26,11 @@ theme_update(
   panel.grid.major = element_blank(),
   
   axis.title = element_text(size = 10, color = fontcolor),
-  axis.text.x = element_text(size = 9, color = fontcolor),
-  axis.ticks.x = element_line(color = fontcolor),
+  axis.text = element_text(size = 9, color = fontcolor),
+  axis.ticks = element_line(color = fontcolor),
   
-  axis.text.y = element_blank(),
-  axis.ticks.y = element_blank(),
+ # axis.text.y = element_blank(),
+#  axis.ticks.y = element_blank(),
   
   strip.text = element_text(size = 10, color = fontcolor, hjust = 0),
   
@@ -82,8 +82,9 @@ ggplot(data = summary) +
                                 as_date("2015-01-01"),
                                 as_date("2020-01-01")),
                      labels = c("2000", "2005", "2010", "2015", "2020")) +
-  scale_y_continuous(labels = number_format(suffix = "M")) +
-  scale_color_manual(values = c("#48D1CC", "#F77613")) +
+  scale_y_continuous(labels = number_format(suffix = "M"),
+                     position = "right") +
+  scale_color_manual(values = c("#FF5E00", "#290FB8")) +
   
   # Annotations
   annotate(geom = "text",
@@ -111,12 +112,23 @@ The 2nd season of Survivor premiered in January and
            hjust = 0) +
   
   annotate(geom = "text",
-           x = as_date("2010-02-25"),
-           y = 30,
+           x = as_date("2004-02-01"),
+           y = 35,
            label = "
-After the second season, viewership of 
-the Survivor season premiers and finales
-generally declined over time.",
+The first all-star season with returning players
+  sparked a large viewership of 33.5 million for 
+  the premier of the 8th season.",
+           family = font,
+           color = fontcolor,
+           size = 3.5,
+           hjust = 0) +
+  
+  annotate(geom = "text",
+           x = as_date("2011-02-25"),
+           y = 20,
+           label = "
+Over time, viewership of Survivor season 
+premiers and finales generally declined.",
            family = font,
            color = fontcolor,
            size = 3.5,
@@ -127,8 +139,8 @@ generally declined over time.",
            x = as_date("2019-09-26"),
            y = 55,
            label = "
-Survivor season permier and finale viewership
-for forty seasons, 2000-2020",
+Survivor season premier and finale viewership over forty seasons
+2000-2020",
            family = "Times New Roman",
            color = fontcolor,
            size = 6,
@@ -136,7 +148,7 @@ for forty seasons, 2000-2020",
   
   # Legend
   annotate(geom = "text",
-           x = as_date("2018-01-26"),
+           x = as_date("2016-01-26"),
            y = 48,
            label = "Season Premier",
            family = font,
@@ -145,14 +157,14 @@ for forty seasons, 2000-2020",
            hjust = 0) +
   
   annotate(geom = "point",
-           x = as_date("2017-11-26"),
+           x = as_date("2015-11-26"),
            y = 47.8,
-           color = "#48D1CC",
+           color = "#290FB8",
            size = 2.5) +
   
   annotate(geom = "text",
            x = as_date("2018-01-26"),
-           y = 46,
+           y = 48,
            label = "Season Finale",
            family = font,
            color = fontcolor,
@@ -161,8 +173,8 @@ for forty seasons, 2000-2020",
   
   annotate(geom = "point",
            x = as_date("2017-11-26"),
-           y = 45.8,
-           color = "#F77613",
+           y = 47.8,
+           color = "#FF5E00",
            size = 2.5) +
   
   
@@ -175,7 +187,11 @@ for forty seasons, 2000-2020",
        color = "",
        caption = "<b>Data:</b> SurvivoR package | <b>Design:</b> Jenn Schilling")
 
-# Add annotations to the plot
-# Maybe label points and remove y-axis
+ggsave("2021-06-01\\survivor.png",
+       plot = last_plot(),
+       device = "png",
+       width = 16,
+       height = 8,
+       type = "cairo")
 
 
