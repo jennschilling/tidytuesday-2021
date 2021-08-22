@@ -26,8 +26,11 @@ theme_update(
   panel.grid.major = element_blank(),
   
   axis.title = element_text(size = 10, color = fontcolor),
-  axis.text = element_text(size = 9, color = fontcolor),
-  axis.ticks = element_line(color = fontcolor),
+  axis.text.x = element_text(size = 9, color = fontcolor),
+  axis.ticks.x = element_line(color = fontcolor),
+  
+  axis.text.y = element_blank(),
+  axis.ticks.y = element_blank(),
   
   strip.text = element_text(size = 10, color = fontcolor, hjust = 0),
   
@@ -53,22 +56,123 @@ summary %>%
   count(higher_finale) 
 # 21 had higher finale viewership, 19 had higher premier viewership
 
+# Make plot
 ggplot(data = summary) +
+  
+  # Line segment and points
   geom_segment(mapping = aes(x = premiered,
                              xend = ended,
                              y = viewers_premier,
                              yend = viewers_finale),
-               color = fontcolor) +
+               color = fontcolor,
+               size = 0.5) +
   geom_point(mapping = aes(x = premiered,
-                           y = viewers_premier),
-             color = "#48D1CC") +
+                           y = viewers_premier,
+                           color = "Season Premier"),
+             size = 2.5) +
   geom_point(mapping = aes(x = ended,
-                           y = viewers_finale),
-             color = "#F77613") +
+                           y = viewers_finale,
+                           color = "Season Finale"),
+             size = 2.5) +
+  
+  # Scale Definitions
+  scale_x_continuous(breaks = c(as_date("2000-01-01"),
+                                as_date("2005-01-01"),
+                                as_date("2010-01-01"),
+                                as_date("2015-01-01"),
+                                as_date("2020-01-01")),
+                     labels = c("2000", "2005", "2010", "2015", "2020")) +
   scale_y_continuous(labels = number_format(suffix = "M")) +
-  labs(subtitle = '<b style="color:#48D1CC">Season Premier</b> <b style="color:#F77613">Season Finale</b>',
-       y = "Number of Viewers",
-       x = "Show Date",
+  scale_color_manual(values = c("#48D1CC", "#F77613")) +
+  
+  # Annotations
+  annotate(geom = "text",
+           x = as_date("1995-08-23"),
+           y = 13,
+           label = "
+The 1st season of Survivor premiered in May and 
+ended in August 2000. It began with 15.5 million 
+viewers and grew to 51.7 million by the finale.",
+           family = font,
+           color = fontcolor,
+           size = 3.5,
+           hjust = 0) +
+  
+  annotate(geom = "text",
+           x = as_date("2001-01-28"),
+           y = 47,
+           label = "
+The 2nd season of Survivor premiered in January and 
+  ended in May 2001. It began with 45.4 million viewers
+  and dropped to 36.4 million by the finale.",
+           family = font,
+           color = fontcolor,
+           size = 3.5,
+           hjust = 0) +
+  
+  annotate(geom = "text",
+           x = as_date("2010-02-25"),
+           y = 30,
+           label = "
+After the second season, viewership of 
+the Survivor season premiers and finales
+generally declined over time.",
+           family = font,
+           color = fontcolor,
+           size = 3.5,
+           hjust = 0) +
+  
+  # Title
+  annotate(geom = "text",
+           x = as_date("2019-09-26"),
+           y = 55,
+           label = "
+Survivor season permier and finale viewership
+for forty seasons, 2000-2020",
+           family = "Times New Roman",
+           color = fontcolor,
+           size = 6,
+           hjust = 1) +
+  
+  # Legend
+  annotate(geom = "text",
+           x = as_date("2018-01-26"),
+           y = 48,
+           label = "Season Premier",
+           family = font,
+           color = fontcolor,
+           size = 3.5,
+           hjust = 0) +
+  
+  annotate(geom = "point",
+           x = as_date("2017-11-26"),
+           y = 47.8,
+           color = "#48D1CC",
+           size = 2.5) +
+  
+  annotate(geom = "text",
+           x = as_date("2018-01-26"),
+           y = 46,
+           label = "Season Finale",
+           family = font,
+           color = fontcolor,
+           size = 3.5,
+           hjust = 0) +
+  
+  annotate(geom = "point",
+           x = as_date("2017-11-26"),
+           y = 45.8,
+           color = "#F77613",
+           size = 2.5) +
+  
+  
+  
+  # Labels and Formatting
+  coord_cartesian(clip = "off") +
+  guides(color = FALSE) +
+  labs(x = "",
+       y = "",
+       color = "",
        caption = "<b>Data:</b> SurvivoR package | <b>Design:</b> Jenn Schilling")
 
 # Add annotations to the plot
