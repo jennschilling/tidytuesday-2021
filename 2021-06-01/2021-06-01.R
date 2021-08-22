@@ -25,12 +25,11 @@ theme_update(
   panel.grid.minor = element_blank(),
   panel.grid.major = element_blank(),
   
+  panel.background = element_rect(color = "white"),
+  
   axis.title = element_text(size = 10, color = fontcolor),
   axis.text = element_text(size = 9, color = fontcolor),
   axis.ticks = element_line(color = fontcolor),
-  
- # axis.text.y = element_blank(),
-#  axis.ticks.y = element_blank(),
   
   strip.text = element_text(size = 10, color = fontcolor, hjust = 0),
   
