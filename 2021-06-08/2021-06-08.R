@@ -12,7 +12,7 @@ library(ggtext)
 
 #### Data #### 
 
-fishing <- readr('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-06-08/fishing.csv')
+fishing <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-06-08/fishing.csv')
 
 #### Formatting ####
 
