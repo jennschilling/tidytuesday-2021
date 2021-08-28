@@ -60,13 +60,6 @@ total_per_yr_lake <- fishing %>%
 #### Plot ####
 
 ggplot(data = total_per_yr_lake,
-       mapping = aes(x = year,
-                     y = values_total,
-                     group = lake,
-                     color = lake)) +
-  geom_line()
-
-ggplot(data = total_per_yr_lake,
        mapping = aes(area = values_total,
                      fill = lake,
                      color = lake)) +
