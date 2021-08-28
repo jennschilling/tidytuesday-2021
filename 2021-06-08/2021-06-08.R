@@ -9,6 +9,7 @@ library(forcats)
 library(scales)
 library(extrafont)
 library(ggtext)
+library(treemapify)
 
 #### Data #### 
 
@@ -47,4 +48,56 @@ theme_update(
   plot.margin = margin(t = 10, r = 10, b = 10, l = 10)
 )
 
+#### Aggregate Data ####
+
+total_per_yr_lake <- fishing %>%
+  group_by(year, lake) %>%
+  summarise(grand_total = sum(grand_total, na.rm = TRUE),
+            values_total = sum(values, na.rm = TRUE),
+            .groups = "drop") %>%
+  filter(year >= 1966)
+
 #### Plot ####
+
+ggplot(data = total_per_yr_lake,
+       mapping = aes(x = year,
+                     y = values_total,
+                     group = lake,
+                     color = lake)) +
+  geom_line()
+
+ggplot(data = total_per_yr_lake,
+       mapping = aes(area = values_total,
+                     fill = lake,
+                     color = lake)) +
+  geom_treemap() +
+  facet_wrap(~year) +
+  guides(fill = guide_legend(nrow = 1),
+         color = "none") +
+  scale_fill_manual(values = c("#233947",
+                               "#2F6468",
+                               "#455b78",
+                               "#09846F",
+                               "#6EB7AE",
+                               "#52A5C1")) +
+  scale_color_manual(values = c("#233947",
+                               "#2F6468",
+                               "#455b78",
+                               "#09846F",
+                               "#6EB7AE",
+                               "#52A5C1")) +
+  labs(title = "Commercial fish production in the Great Lakes, 1966-2015",
+       fill = "",
+       caption = "<b>Data:</b> Great Lakes Fishery Commission | <b>Design:</b> Jenn Schilling") +
+  theme(legend.position = c(0.92, 0.07),
+        legend.justification = "right")
+
+ggsave("2021-06-08\\greatlakes.png",
+       plot = last_plot(),
+       device = "png",
+       width = 8,
+       height = 8,
+       type = "cairo")
+
+
+
