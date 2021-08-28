@@ -5,8 +5,6 @@
 #### Libraries ####
 
 library(tidyverse)
-library(forcats)
-library(scales)
 library(extrafont)
 library(ggtext)
 library(treemapify)
