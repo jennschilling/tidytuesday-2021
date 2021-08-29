@@ -17,10 +17,10 @@ drivers <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesd
 
 #### Formatting ####
 
-# remotes::install_version("Rttf2pt1", version = "1.3.8") # https://stackoverflow.com/questions/61204259/how-can-i-resolve-the-no-font-name-issue-when-importing-fonts-into-r-using-ext 
-# library(here)
-# font_import(path = here("2021-05-25"), pattern = "SuperMario256", prompt = FALSE)
-# loadfonts(device = "win")
+remotes::install_version("Rttf2pt1", version = "1.3.8") # https://stackoverflow.com/questions/61204259/how-can-i-resolve-the-no-font-name-issue-when-importing-fonts-into-r-using-ext
+library(here)
+font_import(path = here("2021-05-25"), pattern = "SuperMario256", prompt = FALSE)
+loadfonts(device = "win")
 
 font <- "Super Mario 256"
 fontcolor <- "black"
@@ -30,6 +30,8 @@ theme_set(theme_minimal(base_size = 12, base_family = font))
 theme_update(
   panel.grid.minor = element_blank(),
   panel.grid.major = element_blank(),
+  
+  panel.background = element_rect(fill = "white"),
   
   axis.title.x = element_text(size = 10, color = fontcolor),
   axis.text.x = element_text(size = 9, color = fontcolor),
