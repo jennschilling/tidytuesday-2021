@@ -31,7 +31,7 @@ tucson <- parks %>%
 
 font <- "Gill Sans MT"
 fontcolor <- "gray30"
-bcolor <- "#F0F0F0"
+bcolor <- "#F8F8F8"
 
 # Color Palette Sources: 
 # https://www.color-hex.com/color-palette/37104
@@ -60,6 +60,8 @@ theme_update(
   axis.text = element_text(size = 9, color = fontcolor),
   axis.ticks = element_line(color = fontcolor),
   
+  axis.line.x = element_line(color = fontcolor),
+  
   strip.text = element_text(size = 10, color = fontcolor, hjust = 0),
   
   legend.text = element_text(size = 10, color = fontcolor),
@@ -78,6 +80,8 @@ theme_update(
 
 #### Plot ####
 
+# Create subplots
+
 rank <- ggplot(data = tucson,
        mapping = aes(x = year,
                      y = rank)) +
@@ -86,7 +90,7 @@ rank <- ggplot(data = tucson,
   geom_point(size = 2,
              color = tucson_colors[1]) +
   scale_y_reverse() +
-  labs(title = "Tucson's rank among the top 100 cities has declined since 2012.",
+  labs(title = "Tucson's rank for local parks among 100 cities in the U.S. has declined since 2012.",
        x = "",
        y = "")
 
@@ -96,9 +100,11 @@ parkarea <- ggplot(data = tucson,
                      group = 1)) +
   geom_line(size = 1,
             color = tucson_colors[4]) +
+  geom_point(size = 2,
+            color = tucson_colors[4]) +
   scale_y_continuous(limits = c(0.01, 0.04),
-                     labels = percent_format(accuracy = 0.1)) +
-  labs(title = "Parkland as percentage of city area in Tucson is quite low. It increased slightly in 2016 and has remained constant since.",
+                     labels = percent_format(accuracy = 1)) +
+  labs(title = "Parkland as percentage of city area in Tucson is quite low.<br>It increased slightly in 2016 and has remained constant since.",
        x = "",
        y = "")
 
@@ -108,9 +114,11 @@ pctresidents <- ggplot(data = tucson,
                      group = 1)) +
   geom_line(size = 1,
             color = tucson_colors[10]) +
+  geom_point(size = 2,
+            color = tucson_colors[10]) +
   scale_y_continuous(limits = c(0.5, 0.65),
-                     labels = percent_format(accuracy = 0.1)) +
-  labs(title = "More than half of Tucson residents live within a 10 minute walk of a park.",
+                     labels = percent_format(accuracy = 1)) +
+  labs(title = "More than half of Tucson residents live within a 10 minute walk of a park.<br>The percentage of Tucsonans close to parks has increased.",
        x = "",
        y = "")
 
@@ -120,9 +128,11 @@ spend <- ggplot(data = tucson,
                      group = 1)) +
   geom_line(size = 1,
             color = tucson_colors[9]) +
+  geom_point(size = 2,
+            color = tucson_colors[9]) +
   scale_y_continuous(limits = c(50, 105),
                      labels = dollar_format(accuracy = 1)) +
-  labs(title = "Spending per resident on parks has declined in Tucson since 2013. Spending has almost been cut in half from 2012 to 2020.",
+  labs(title = "Spending per resident on parks has declined in Tucson since 2013.<br>Spending has been almost cut in half from 2012 to 2020.",
        x = "",
        y = "")
 
@@ -132,10 +142,27 @@ size <- ggplot(data = tucson,
                      group = 1)) +
   geom_line(size = 1,
             color = tucson_colors[6]) +
+  geom_point(size = 2,
+             color = tucson_colors[6]) +
   scale_y_continuous(limits = c(4, 5.5)) +
-  labs(title = "Median park size (in acres) in Tucson has increased by 1.4 acres from 2012 to 2020.",
+  labs(title = "Median park size (in acres) in Tucson is quite small.<br>Median size has increased by 1.4 acres from 2012 to 2020.",
        x = "",
        y = "")
 
+# Put subplots together
 
+rank / (spend + size + parkarea + pctresidents) + 
+  plot_layout(heights = c(1, 2)) +
+  plot_annotation(
+    title = "<b>There is room for improvement in Tucson's parks.</b>",
+    caption = "<b>Data:</b> The Trust for Public Land | <b>Design:</b> Jenn Schilling")
+
+# Save
+
+ggsave("2021-06-22\\tucsonparks.png",
+       plot = last_plot(),
+       device = "png",
+       width = 11,
+       height = 11,
+       type = "cairo")
 
