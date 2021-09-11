@@ -11,7 +11,11 @@ library(scales)
 
 #### Data #### 
 
-animal_rescues <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-06-29/animal_rescues.csv')
+animal_rescues <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-06-29/animal_rescues.csv') %>%
+  mutate(incident_notional_cost = parse_number(incident_notional_cost),
+         pump_hours_total = parse_number(pump_hours_total),
+         animal_group_parent = str_to_title(animal_group_parent)) %>%
+  filter(cal_year < 2021)
 
 
 #### Formatting ####
@@ -53,14 +57,32 @@ theme_update(
 
 #### Plot ####
 
+top_10_animals <- animal_rescues %>%
+  group_by(animal_group_parent) %>%
+  summarise(n = n(),
+            .groups = "drop") %>%
+  top_n(n = 10) %>%
+  select(animal_group_parent)
+
+ggplot(data = animal_rescues %>%
+         right_join(., top_10_animals, by = "animal_group_parent"),
+       mapping = aes(x = incident_notional_cost,
+                     y = fct_rev(animal_group_parent),
+                     color = animal_group_parent)) +
+  geom_boxplot()
 
 
-# Save
-
-ggsave("2021-06-29\\.png",
-       plot = last_plot(),
-       device = "png",
-       width = 11,
-       height = 11,
-       type = "cairo")
-
+ggplot(data = animal_rescues %>%
+         right_join(., top_10_animals, by = "animal_group_parent") %>%
+         group_by(cal_year, animal_group_parent) %>%
+         summarise(n = n(),
+                   .groups = "drop"),
+       mapping = aes(x = cal_year,
+                     y = n,
+                     group = animal_group_parent,
+                     color = animal_group_parent)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~ animal_group_parent,
+             ncol = 1) +
+  guides(color = FALSE)
