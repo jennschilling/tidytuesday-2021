@@ -44,7 +44,9 @@ giant_pumpkins <- pumpkins %>%
          country = ifelse(country == "United Kingdom", 
                           "the United Kingdom", country),
          label = paste("In", year, grower_name, "from", country, 
-                       "had a pumpkin weighing", weight_lbs_lab, "pounds.")) %>%
+                       "grew a pumpkin weighing", weight_lbs_lab, "pounds.") %>%
+                 str_wrap(width = 25),
+         weight_lbs = ifelse(place_num == 2, weight_lbs + 200, weight_lbs)) %>%
   select(year, weight_lbs, label)
 
 #### Formatting ####
@@ -86,19 +88,29 @@ theme_update(
 
 #### Plot ####
 
+set.seed(1234)
+
 ggplot(data = pumpkins %>%
          filter(type == "Giant Pumpkin"),
        mapping = aes(x = year,
                      y = weight_lbs)) +
-  geom_jitter(color = "#FF7518") +
-  annotate("text",
-           x = giant_pumpkins$year,
-           y = giant_pumpkins$weight_lbs,
-           label = giant_pumpkins$label,
+  geom_jitter(color = "#FF7518",
+              width = 0.4,
+              height = 0.4) +
+  geom_text(data = giant_pumpkins,
+            mapping = aes(x = year,
+                          y = weight_lbs,
+                          label = label),
            color = fontcolor,
-           family = font) +
+           family = font,
+           hjust = 0,
+           vjust = 0,
+           position = position_nudge(x = 0.1,
+                                     y = 10)) +
   scale_y_continuous(label = number_format(big.mark = ","),
-                     expand = c(0,0)) +
+                     expand = c(0,0),
+                     limits = c(0, 3000),
+                     breaks = seq(0, 3000, 500)) +
   coord_cartesian(clip = "off") +
   labs(title = "The increasing weight of Giant Pumpkins.",
        subtitle = "",
