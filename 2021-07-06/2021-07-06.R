@@ -108,4 +108,11 @@ ggplot(data = cal,
                                       color = fontcolor, 
                                       family = title_font))
 
+# Save
+ggsave("2021-07-06\\independence_days.png",
+       plot = last_plot(),
+       device = "png",
+       width = 12,
+       height = 8,
+       type = "cairo")
         
