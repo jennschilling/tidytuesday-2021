@@ -8,11 +8,36 @@ library(tidyverse)
 library(extrafont)
 library(ggtext)
 library(scales)
+library(lubridate)
 
 #### Data #### 
 
 ultra_rankings <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-10-26/ultra_rankings.csv')
 race <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-10-26/race.csv')
+
+# Frequent racers
+
+freq_racers <- ultra_rankings %>%
+  count(runner, gender, sort = TRUE)
+
+# Women-Identifying Racers with More than 20 races
+w_freq_racers <- freq_racers %>%
+  filter(gender == "W" & n > 20) %>%
+  left_join(ultra_rankings, by = c("runner", "gender")) %>%
+  left_join(race, by = "race_year_id") %>%
+  # Assume races with 0 for the distance are actually 100 miles or 160.93 km
+  mutate(distance = ifelse(distance == 0, 160.93, distance)) %>%
+  # Remove states from some country entries
+  mutate(country = country %>% str_replace("[^,]*, ", "")) %>%
+  # Get maximum age since the age doesn't seem to change by year for many runners
+  group_by(runner) %>%
+  mutate(max_age = max(age)) %>%
+  ungroup() %>%
+  # Get columns of interest
+  select(runner, n, race_year_id, date, rank, max_age, 
+         nationality, time_in_seconds, country, distance) %>%
+  mutate(race_year = year(date),
+         race_month = month(date))
 
 #### Formatting ####
 
