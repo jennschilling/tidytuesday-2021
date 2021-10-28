@@ -94,11 +94,11 @@ ggplot(data = scoobydoo_long,
   labs(fill = "",
        title = "<b>Scooby Doo:</b> Catching Monsters, Unmasking Monsters, and Getting Captured",
        subtitle = "<br><span style = 'color:#EE7C09;'><b>Fred</b></span> and
-       <span style = 'color:#3EC1BB;'><b>Scooby</b></span> catch the most of monsters.
+       <span style = 'color:#3EC1BB;'><b>Scooby</b></span> caught the most of monsters.
        <span style = 'color:#EE7C09;'><b>Fred</b></span> and 
-       <span style = 'color:#BF0246;'><b>Velma</b></span> unmask the most monsters.
+       <span style = 'color:#BF0246;'><b>Velma</b></span> unmasked the most monsters.
         <span style = 'color:#6B4291;'><b>Daphnie</b></span>, <span style = 'color:#B2C400;'><b>Shaggy</b></span>, 
-        and <span style = 'color:#3EC1BB;'><b>Scooby</b></span> get captured the most.<br>",
+        and <span style = 'color:#3EC1BB;'><b>Scooby</b></span> got captured the most.<br>",
        caption = "<br><b>Data:</b> Kaggle from plummye | <b>Design:</b> Jenn Schilling") +
   guides(fill = "none") +
   coord_cartesian(expand = FALSE,
