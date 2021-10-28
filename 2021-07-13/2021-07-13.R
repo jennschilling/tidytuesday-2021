@@ -13,9 +13,25 @@ library(scales)
 
 scoobydoo <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-07-13/scoobydoo.csv')
 
+scoobydoo_long <- scoobydoo %>%
+  select(index, series_name, season, title, date_aired,
+         caught_fred, caught_daphnie, caught_velma, caught_shaggy, caught_scooby,
+         captured_fred, captured_daphnie, captured_velma, captured_shaggy, captured_scooby,
+         unmask_fred, unmask_daphnie, unmask_velma, unmask_shaggy, unmask_scooby) %>%
+  pivot_longer(caught_fred:unmask_scooby) %>%
+  separate(name, c("type", "character"), "_") %>%
+  filter(value == TRUE) %>%
+  mutate(character = str_to_title(character),
+         type = case_when(
+           type == "captured" ~ "Got\nCaptured",
+           type == "unmask" ~ "Unmasked\nMonster",
+           type == "caught" ~ "Caught\nMonster"
+         ) %>%
+           factor(levels = c("Got\nCaptured", "Unmasked\nMonster", "Caught\nMonster")))
+
 #### Formatting ####
 
-font <- "verdana"
+font <- "Trebuchet MS"
 title_font <- "Georgia"
 fontcolor <- "gray30"
 bcolor <- "#F8F8F8"
@@ -41,12 +57,61 @@ theme_update(
   legend.title = element_text(size = 10, color = fontcolor),
   
   plot.title.position = "plot",
-  plot.title = element_markdown(size = 12, color = fontcolor, family = title_font),
+  plot.title = element_markdown(size = 17, color = fontcolor, family = font),
   
-  plot.subtitle = element_markdown(size = 11, color = fontcolor, family = title_font),
+  plot.subtitle = element_markdown(size = 11, color = fontcolor, family = font),
   
   plot.caption.position = "plot",
-  plot.caption = element_markdown(size = 8, color = fontcolor),
+  plot.caption = element_markdown(size = 8, color = fontcolor, hjust = 1.04),
   
-  plot.margin = margin(t = 10, r = 20, b = 10, l = 20)
+  plot.margin = margin(t = 15, r = 50, b = 15, l = 30)
 )
+
+# Colors
+
+# Velma Yellow: #F0A200 Maroon: #BF0246
+# Shaggy Green: #B2C400 Brown: #A14135
+# Scooby Blue: #3EC1BB Brown: #AE7A00 
+# Fred Blue: #009AD8 Orange: #EE7C09 (also white)
+# Daphnie Purple: #6B4291 Green: #C8D900 Light Purple: #AF94B5
+
+
+#### Plot ####
+
+ggplot(data = scoobydoo_long,
+       mapping = aes(x = as.factor(index),
+                     y = type,
+                     fill = character)) +
+  geom_tile() +
+  scale_fill_manual(values = c("#6B4291", # Daphnie
+                               "#EE7C09", # Fred
+                               "#3EC1BB", # Scooby
+                               "#B2C400", # Shaggy
+                               "#BF0246" # Velma
+                                 )) +
+  scale_x_discrete(breaks = c(1, 603),
+                   labels = c("Oldest\nEpisode\nSep. 13, 1969", "Newest\nEpisode\nFeb. 25, 2021")) +
+  labs(fill = "",
+       title = "<b>Scooby Doo:</b> Catching Monsters, Unmasking Monsters, and Getting Caught",
+       subtitle = "<br><span style = 'color:#EE7C09;'><b>Fred</b></span> and
+       <span style = 'color:#3EC1BB;'><b>Scooby</b></span> catch the most of monsters.
+       <span style = 'color:#EE7C09;'><b>Fred</b></span> and 
+       <span style = 'color:#BF0246;'><b>Velma</b></span> unmask the most monsters.
+        <span style = 'color:#6B4291;'><b>Daphnie</b></span>, <span style = 'color:#B2C400;'><b>Shaggy</b></span>, 
+        and <span style = 'color:#3EC1BB;'><b>Scooby</b></span> get caught the most.<br>",
+       caption = "<br><b>Data:</b> Kaggle from plummye | <b>Design:</b> Jenn Schilling") +
+  guides(fill = "none") +
+  coord_cartesian(expand = FALSE,
+                  clip = "off") +
+  theme(axis.title = element_blank(),
+        axis.line = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = "top")
+
+# Save
+ggsave("2021-07-13\\scooby.png",
+       plot = last_plot(),
+       device = "png",
+       width = 11,
+       height = 5,
+       type = "cairo")
