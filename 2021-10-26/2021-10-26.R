@@ -108,29 +108,34 @@ theme_update(
   plot.background = element_rect(fill = bcolor, color = NA),
   
   axis.title = element_text(size = 10, color = fontcolor),
-  axis.text = element_text(size = 9, color = fontcolor),
+  axis.text = element_text(size = 12, color = fontcolor),
   axis.ticks = element_line(color = fontcolor),
   
   axis.line = element_line(color = fontcolor),
   
-  strip.text = element_text(size = 12, color = fontcolor, hjust = 0),
+  strip.text = element_text(size = 20, color = fontcolor, hjust = 0),
   
   legend.text = element_text(size = 10, color = fontcolor),
   legend.title = element_text(size = 10, color = fontcolor),
   
   plot.title.position = "plot",
-  plot.title = element_markdown(size = 12, color = fontcolor, family = title_font),
+  plot.title = element_markdown(size = 30, color = fontcolor, family = title_font),
   
-  plot.subtitle = element_markdown(size = 10, color = fontcolor),
+  plot.subtitle = element_markdown(size = 20, color = fontcolor, family = title_font),
   
   plot.caption.position = "plot",
-  plot.caption = element_markdown(size = 8, color = fontcolor),
+  plot.caption = element_markdown(size = 10, color = fontcolor),
   
-  plot.margin = margin(t = 10, r = 10, b = 10, l = 10)
+  plot.margin = margin(t = 15, r = 20, b = 15, l = 20)
 )
 
 
 #### Plot ####
+
+# Color is time in seconds - faster is darker
+# Y position is the distance of the race - 155km to 174.2 km
+# Runners are arranged from youngest to oldest
+# Lines within the rectangle represent the location of the race
 
 ggplot() +
   geom_rect(data = w_freq_racers,
@@ -155,25 +160,60 @@ ggplot() +
                              yend = yend2,
                              color = time_in_seconds),
                size = 1) +
-  # scale_color_viridis_c(option = "D") +
-  scale_color_gradient2(high = "#787FF6",
-                        mid = "#4ADEDE") +
-  # scale_color_gradient2(high = "#205072",
-  #                       mid = "#56C596") +
-  # scale_color_distiller(palette = "Set2",
+  # scale_color_viridis_c(option = "D",
   #                       direction = -1,
-  #                       na.value = "#bdbdbd") +
+  #                       na.value = "#D7D7D7")+
+  # scale_color_gradient2(high = "#787FF6",
+  #                       mid = "#4ADEDE",
+  #                       na.value = "#D7D7D7") +
+  # scale_color_gradient2(high = "#205072",
+  #                       mid = "#56C596",
+  #                       na.value = "#D7D7D7") +
+  scale_color_distiller(palette = "RdPu",
+                        direction = -1,
+                        na.value = "#D7D7D7") +
   geom_point(data = w_freq_racers %>%
                filter(top_10_rank),
              mapping = aes(x = date + 15,
                            y = distance + distance / 50),
-             color = "#de4a94",
-             shape = 8) +
+             color = "#01AE7E",
+             shape = 8,
+             size = 2) +
   facet_wrap(~ runner,
-             ncol = 1) +
+             ncol = 1,
+             scales = "free_x",
+             strip.position = "left") +
+  scale_x_date(limits = c(as.Date("2012-01-01"), as.Date("2022-01-01")),
+               date_breaks = "years",
+               date_labels = "%Y") +
+  scale_y_continuous(limits = c(145, 185)) +
   guides(color = "none") +
-  labs(y = "",
-       x = "") +
+  coord_cartesian(clip = "off",
+                  expand = FALSE) +
+  labs(title = "Each run by the women who have run more than 20 Ultra Trail Runs",
+       subtitle = "The x position along the timeline represents the date of the race from 2012 through 2021.<br>
+       The y position represents the distance of the race, the shortest race was 155km; the longest race was 174.2km.<br>
+       The color represents the runner's time: 
+       <span style = 'color:#ae017e;'>faster times</span>; 
+       <span style = 'color:#fa9fb5;'>slower times</span>; 
+       grey means no time.<br>
+       A <span style = 'color:#01AE7E';>star</span> in the top corner represents a top 10 finish.",
+       y = "",
+       x = "",
+       caption = "<b>Data:</b> International Trail Running Association (ITRA) | <b>Design:</b> Jenn Schilling") +
   theme(axis.ticks.y = element_blank(),
         axis.line.y = element_blank(),
-        axis.text.y = element_blank())
+        axis.text.y = element_blank(),
+        panel.spacing.y = unit(1, "cm"),
+        strip.placement.y = "inside",
+        strip.text.y.left = element_text(size = 20, color = fontcolor, 
+                                         angle = 0, vjust = 0, hjust = 1))
+
+# Save
+ggsave("2021-10-26\\greatracers.png",
+       plot = last_plot(),
+       device = "png",
+       width = 14,
+       height = 18,
+       type = "cairo")
+
