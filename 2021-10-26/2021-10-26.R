@@ -191,8 +191,9 @@ ggplot() +
   coord_cartesian(clip = "off",
                   expand = FALSE) +
   labs(title = "Each run by the women who have run more than 20 Ultra Trail Runs",
-       subtitle = "The x position along the timeline represents the date of the race from 2012 through 2021.<br>
-       The y position represents the distance of the race, the shortest race was 155km; the longest race was 174.2km.<br>
+       subtitle = "Runners are arranged from youngest to oldest; the youngest is 46 and the oldest is 62, as of their last race.<br>
+       The x position along the timeline represents the date of the race from 2012 through 2021.<br>
+       The y position represents the distance of the race: the shortest race was 155km; the longest race was 174.2km.<br>
        The color represents the runner's time: 
        <span style = 'color:#ae017e;'>faster times</span>; 
        <span style = 'color:#fa9fb5;'>slower times</span>; 
@@ -204,7 +205,7 @@ ggplot() +
   theme(axis.ticks.y = element_blank(),
         axis.line.y = element_blank(),
         axis.text.y = element_blank(),
-        panel.spacing.y = unit(1, "cm"),
+        panel.spacing = unit(1, "cm"),
         strip.placement.y = "inside",
         strip.text.y.left = element_text(size = 20, color = fontcolor, 
                                          angle = 0, vjust = 0, hjust = 1))
