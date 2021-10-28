@@ -2,6 +2,9 @@
 
 Data visualizations developed in R using data from [#TidyTuesday 2021](https://github.com/rfordatascience/tidytuesday/tree/master/data/2021).
 
+# 26 October 2021
+![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-10-26/greatraces.png)
+
 # 19 October 2021
 ![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-10-19/giantpumpkins.png)
 
