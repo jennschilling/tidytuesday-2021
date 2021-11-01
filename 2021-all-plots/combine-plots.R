@@ -49,19 +49,31 @@ row_6_21 <- image_append(
 row_7_21 <- image_append(
   c(image_border(image_resize(image_read("2021-06-08\\greatlakes.png"), "500x400!"), color = "white", geometry = "10x10"),
     image_border(image_resize(image_read("2021-06-15\\duboischallenge.png"), "500x400!"), color = "white", geometry = "10x10"),
-    image_border(image_resize(image_read("2021-06-22\\tucsonparks.png"), "500x400!"), color = "white", geometry = "10x10")))
+    image_border(image_resize(image_read("2021-06-22\\tucsonparks.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-06-29\\cat_rescues.png"), "500x400!"), color = "white", geometry = "10x10")))
 
-final_21 <- image_append(c(row_1_21,
+row_8_21 <- image_append(
+  c(image_border(image_resize(image_read("2021-07-06\\independence_days.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-07-13\\scooby.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-07-20\\usdrought.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-10-19\\giantpumpkins.png"), "500x400!"), color = "white", geometry = "10x10")))
+
+row_9_21 <- image_append(
+  c(image_border(image_resize(image_read("2021-10-26\\greatracers.png"), "500x400!"), color = "white", geometry = "10x10")))
+
+final_21_long <- image_append(c(row_1_21,
                            row_2_21,
                            row_3_21,
                            row_4_21,
                            row_5_21,
                            row_6_21,
-                           row_7_21),
+                           row_7_21,
+                           row_8_21,
+                           row_9_21),
                          stack = TRUE)
 
-image_write(final_21,
-            "2021-all-plots\\2021-summary.png")
+# image_write(final_21,
+#             "2021-all-plots\\2021-summary.png")
 
 
 #### Get Plots for 2021 [Wide] ####
@@ -99,12 +111,21 @@ row_3_21 <- image_append(
 row_4_21 <- image_append(
   c(image_border(image_resize(image_read("2021-06-08\\greatlakes.png"), "500x400!"), color = "white", geometry = "10x10"),
     image_border(image_resize(image_read("2021-06-15\\duboischallenge.png"), "500x400!"), color = "white", geometry = "10x10"),
-    image_border(image_resize(image_read("2021-06-22\\tucsonparks.png"), "500x400!"), color = "white", geometry = "10x10")))
+    image_border(image_resize(image_read("2021-06-22\\tucsonparks.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-06-29\\cat_rescues.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-07-06\\independence_days.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-07-13\\scooby.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-07-20\\usdrought.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-10-19\\giantpumpkins.png"), "500x400!"), color = "white", geometry = "10x10")))
+
+row_5_21 <- image_append(
+  c(image_border(image_resize(image_read("2021-10-26\\greatracers.png"), "500x400!"), color = "white", geometry = "10x10")))
 
 final_21_w <- image_append(c(row_1_21,
                              row_2_21,
                              row_3_21,
-                             row_4_21),
+                             row_4_21,
+                             row_5_21),
                            stack = TRUE)
 
 image_write(final_21_w,
@@ -143,7 +164,7 @@ image_write(final_20,
 #### Put 2020 and 2021 Together ####
 
 final <- image_append(c(final_20,
-                        final_21),
+                        final_21_long),
                       stack = TRUE)
 
 image_write(final,
@@ -201,14 +222,22 @@ row_6 <- image_append(
   c(image_border(image_resize(image_read("2021-06-01\\survivor.png"), "500x400!"), color = "white", geometry = "10x10"),
     image_border(image_resize(image_read("2021-06-08\\greatlakes.png"), "500x400!"), color = "white", geometry = "10x10"),
     image_border(image_resize(image_read("2021-06-15\\duboischallenge.png"), "500x400!"), color = "white", geometry = "10x10"),
-    image_border(image_resize(image_read("2021-06-22\\tucsonparks.png"), "500x400!"), color = "white", geometry = "10x10")))
+    image_border(image_resize(image_read("2021-06-22\\tucsonparks.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-06-29\\cat_rescues.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-07-13\\scooby.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-07-20\\usdrought.png"), "500x400!"), color = "white", geometry = "10x10")))
+
+row_7 <- image_append(
+  c(image_border(image_resize(image_read("2021-10-19\\giantpumpkins.png"), "500x400!"), color = "white", geometry = "10x10"),
+    image_border(image_resize(image_read("2021-10-26\\greatracers.png"), "500x400!"), color = "white", geometry = "10x10")))
 
 final_together <- image_append(c(row_1,
                                  row_2,
                                  row_3,
                                  row_4,
                                  row_5,
-                                 row_6),
+                                 row_6,
+                                 row_7),
                                stack = TRUE)
 
 image_write(final_together,
