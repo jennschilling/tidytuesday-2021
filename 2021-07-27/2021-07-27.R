@@ -13,6 +13,12 @@ library(scales)
 
 olympics <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-07-27/olympics.csv')
 
+events_per_person_sport <- olympics %>%
+  group_by(name, sex, age, year, season, sport) %>%
+  summarise(n_events = n(),
+            .groups = "drop") %>%
+  ungroup()
+
 #### Formatting ####
 
 font <- "Gill Sans MT"
@@ -50,5 +56,12 @@ theme_update(
   
   plot.margin = margin(t = 15, r = 50, b = 15, l = 30)
 )
+
+# Olympics Colors
+o_blue <- "#0286c3"
+o_yellow <- "#fbb22e"
+o_black <- "#000000"
+o_green <- "#168c39"
+o_red <- "#ee2f4d"
 
 #### Plot ####
