@@ -7,42 +7,29 @@
 library(tidyverse)
 library(extrafont)
 library(ggtext)
-library(scales)
+library(magick)
+library(grid)
 
 #### Data #### 
 
 olympics <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-07-27/olympics.csv')
 
-events_per_person_sport <- olympics %>%
-  group_by(name, sex, age, year, season, sport) %>%
-  summarise(n_events = n(),
-            .groups = "drop") %>%
-  ungroup()
-
-person_team <- olympics %>%
-  select(year, season, sport, team, name, sex, age) %>%
+sport_events_year <- olympics %>%
+  select(year, season, sport, event) %>%
   unique() %>%
-  group_by(year, season, team) %>%
-  summarise(n_people = n(),
-            .groups = "drop") %>%
-  ungroup()
+  count(year, season, sport)
 
-year_teams <- olympics %>%
-  select(year, season, team) %>%
-  unique() %>%
-  count(year, season)
+# Olympic rings
+rings <- image_read("https://stillmed.olympics.com/media/Images/OlympicOrg/IOC/The_Organisation/The-Olympic-Rings/Olympic_rings_TM_c_IOC_All_rights_reserved_1.jpg")
 
-year_athletes <- olympics %>%
-  select(year, season, team, name, sex, age, sport) %>%
-  unique() %>%
-  count(year, season)
+rings <- rasterGrob(rings, interpolate = TRUE)
 
 #### Formatting ####
 
-font <- "Gill Sans MT"
-titlefont <- "Georgia"
-fontcolor <- "gray30"
-bcolor <- "#F8F8F8"
+font <- "Rockwell"
+titlefont <- "Rockwell"
+fontcolor <- "#000000"
+bcolor <- "#FFFFFF"
 
 theme_set(theme_minimal(base_size = 12, base_family = font))
 
@@ -54,7 +41,7 @@ theme_update(
   plot.background = element_rect(fill = bcolor, color = NA),
   
   axis.title = element_text(size = 10, color = fontcolor),
-  axis.text = element_text(size = 9, color = fontcolor),
+  axis.text = element_text(size = 10, color = fontcolor),
   axis.ticks = element_line(color = fontcolor),
   
   axis.line = element_line(color = fontcolor),
@@ -62,7 +49,7 @@ theme_update(
   strip.text = element_text(size = 10, color = fontcolor, hjust = 0),
   
   legend.text = element_text(size = 10, color = fontcolor),
-  legend.title = element_text(size = 10, color = fontcolor),
+  legend.title = element_text(size = 12, color = fontcolor),
   
   plot.title.position = "plot",
   plot.title = element_markdown(size = 20, color = fontcolor, family = titlefont),
@@ -72,34 +59,45 @@ theme_update(
   plot.caption.position = "plot",
   plot.caption = element_markdown(size = 8, color = fontcolor, hjust = 1.04),
   
-  plot.margin = margin(t = 15, r = 50, b = 15, l = 30)
+  plot.margin = margin(t = 20, r = 60, b = 20, l = 0)
 )
 
-# Olympics Colors
-o_blue <- "#0286c3"
-o_yellow <- "#fbb22e"
-o_black <- "#000000"
-o_green <- "#168c39"
-o_red <- "#ee2f4d"
 
 #### Plot ####
 
-ggplot(data = events_per_person_sport,
-       mapping = aes(x = n_events,
+ggplot(data = sport_events_year %>% filter(season == "Winter"),
+       mapping = aes(x = year,
                      y = sport,
-                     color = season)) +
-  geom_jitter() +
-  scale_color_manual(values = c(o_blue, o_green))
-
-
-ggplot(data = year_athletes,
-       mapping = aes(x = year,
-                     y = n,
-                     color = season)) +
-  geom_line()
-
-ggplot(data = year_teams,
-       mapping = aes(x = year,
-                     y = n,
-                     color = season)) +
-  geom_line()
+                     fill = n)) +
+  annotation_custom(rings,
+                    xmin = 2010,
+                    xmax = 2025,
+                    ymin = 22) +
+  geom_tile(color = bcolor) +
+  scale_fill_gradient(low = "#67B6DB",
+                      high = "#014261",
+                      guide = guide_colorbar(title.position = "top",
+                                             barwidth = 10,
+                                             barheight = 1))  +
+  scale_x_continuous(breaks = seq(1924, 2014, 10)) +
+  scale_y_discrete(limits=rev) +
+  coord_cartesian(expand = FALSE,
+                  clip = "off") +
+  labs(title = "The number of sports and events at the Winter Olympics have increased over time.<br><br>",
+       x = "",
+       y = "",
+       fill = "Number of Events",
+       caption = "<b>Data:</b> Kaggle | <b>Design:</b> Jenn Schilling") +
+  theme(legend.position = "bottom",
+        legend.justification = "right",
+        axis.line = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_text(size = 12, hjust = 1, vjust = 0),
+        axis.text.x = element_text(size = 12))
+# Save
+ggsave("2021-07-27\\winterolympics.png",
+       plot = last_plot(),
+       device = "png",
+       width = 12,
+       height = 8,
+       type = "cairo")
