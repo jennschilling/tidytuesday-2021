@@ -19,6 +19,24 @@ events_per_person_sport <- olympics %>%
             .groups = "drop") %>%
   ungroup()
 
+person_team <- olympics %>%
+  select(year, season, sport, team, name, sex, age) %>%
+  unique() %>%
+  group_by(year, season, team) %>%
+  summarise(n_people = n(),
+            .groups = "drop") %>%
+  ungroup()
+
+year_teams <- olympics %>%
+  select(year, season, team) %>%
+  unique() %>%
+  count(year, season)
+
+year_athletes <- olympics %>%
+  select(year, season, team, name, sex, age, sport) %>%
+  unique() %>%
+  count(year, season)
+
 #### Formatting ####
 
 font <- "Gill Sans MT"
@@ -65,3 +83,23 @@ o_green <- "#168c39"
 o_red <- "#ee2f4d"
 
 #### Plot ####
+
+ggplot(data = events_per_person_sport,
+       mapping = aes(x = n_events,
+                     y = sport,
+                     color = season)) +
+  geom_jitter() +
+  scale_color_manual(values = c(o_blue, o_green))
+
+
+ggplot(data = year_athletes,
+       mapping = aes(x = year,
+                     y = n,
+                     color = season)) +
+  geom_line()
+
+ggplot(data = year_teams,
+       mapping = aes(x = year,
+                     y = n,
+                     color = season)) +
+  geom_line()
