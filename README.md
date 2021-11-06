@@ -11,6 +11,9 @@ Data visualizations developed in R using data from [#TidyTuesday 2021](https://g
 # 19 October 2021
 ![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-10-19/giantpumpkins.png)
 
+# 27 July 2021
+![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-07-27/winterolympics.png)
+
 # 20 July 2021
 ![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-07-20/usdrought.png)
 
