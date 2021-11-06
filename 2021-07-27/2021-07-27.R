@@ -18,6 +18,24 @@ sport_events_year <- olympics %>%
   select(year, season, sport, event) %>%
   unique() %>%
   count(year, season, sport)
+  
+# Add WWII Years
+sports <- sport_events_year %>% 
+  filter(season == "Winter") %>%
+  select(sport) %>%
+  unique(.) %>%
+  unlist()
+
+wwii <- tibble(
+    year = c(rep(1940, 17), rep(1944, 17)),
+    season = rep("Winter", 34),
+    sport = c(sports, sports),
+    n = rep(NA, 34)
+  )
+
+winter_sport_events_year <- sport_events_year %>%
+  filter(season == "Winter") %>%
+  bind_rows(wwii)
 
 # Olympic rings
 rings <- image_read("https://stillmed.olympics.com/media/Images/OlympicOrg/IOC/The_Organisation/The-Olympic-Rings/Olympic_rings_TM_c_IOC_All_rights_reserved_1.jpg")
@@ -65,39 +83,44 @@ theme_update(
 
 #### Plot ####
 
-ggplot(data = sport_events_year %>% filter(season == "Winter"),
-       mapping = aes(x = year,
+ggplot(data = winter_sport_events_year,
+       mapping = aes(x = as.factor(year),
                      y = sport,
                      fill = n)) +
   annotation_custom(rings,
-                    xmin = 2010,
-                    xmax = 2025,
-                    ymin = 22) +
+                    xmin = -5,
+                    xmax = 3,
+                    ymin = -23) +
   geom_tile(color = bcolor) +
   scale_fill_gradient(low = "#67B6DB",
                       high = "#014261",
+                      na.value = "#F0F0F0",
                       guide = guide_colorbar(title.position = "top",
                                              barwidth = 10,
                                              barheight = 1))  +
-  geom_vline(xintercept = 1940,
-             size = 7,
-             color = "#F0F0F0") +
-  geom_vline(xintercept = 1944,
-             size = 7,
-             color = "#F0F0F0") +
   annotate("text",
-           x = 1942,
+           x = 5.5,
            y = 17,
            vjust = -0.75,
+           hjust = 0.5,
            label = "Olympics not held\ndue to WWII.",
            size = 3.5,
            family = font,
            color = "gray30") +
-  scale_x_continuous(breaks = seq(1924, 2014, 10)) +
+  annotate("text",
+           x = 18.5,
+           y = 17,
+           vjust = -0.3,
+           hjust = 0.5,
+           label = "1992 and 1994\nOlympics only 2 years\napart to stagger winter\nand summer.",
+           size = 3.5,
+           family = font,
+           color = "gray30") +
+  scale_x_discrete(breaks = c(1924, 1936, 1948, 1960, 1972, 1984, 1994, 2010)) +
   scale_y_discrete(limits=rev) +
   coord_cartesian(expand = FALSE,
                   clip = "off") +
-  labs(title = "The number of sports and events at the Winter Olympics have increased over time.<br><br><br>",
+  labs(title = "The number of sports and events at the Winter Olympics have increased over time.<br><br><br><br>",
        x = "",
        y = "",
        fill = "Number of Events",
