@@ -79,15 +79,29 @@ ggplot(data = sport_events_year %>% filter(season == "Winter"),
                       guide = guide_colorbar(title.position = "top",
                                              barwidth = 10,
                                              barheight = 1))  +
+  geom_vline(xintercept = 1940,
+             size = 7,
+             color = "#F0F0F0") +
+  geom_vline(xintercept = 1944,
+             size = 7,
+             color = "#F0F0F0") +
+  annotate("text",
+           x = 1942,
+           y = 17,
+           vjust = -0.75,
+           label = "Olympics not held\ndue to WWII.",
+           size = 3.5,
+           family = font,
+           color = "gray30") +
   scale_x_continuous(breaks = seq(1924, 2014, 10)) +
   scale_y_discrete(limits=rev) +
   coord_cartesian(expand = FALSE,
                   clip = "off") +
-  labs(title = "The number of sports and events at the Winter Olympics have increased over time.<br><br>",
+  labs(title = "The number of sports and events at the Winter Olympics have increased over time.<br><br><br>",
        x = "",
        y = "",
        fill = "Number of Events",
-       caption = "<b>Data:</b> Kaggle | <b>Design:</b> Jenn Schilling") +
+       caption = "<b>Data:</b> Kaggle | <b>Logo:</b> International Olympic Committee | <b>Design:</b> Jenn Schilling") +
   theme(legend.position = "bottom",
         legend.justification = "right",
         axis.line = element_blank(),
