@@ -20,17 +20,10 @@ sport_events_year <- paralympics %>%
   unique() %>%
   count(year, type) %>%
   group_by(type) %>%
-  mutate(sport_label = ifelse(row_number() == 1, type, NA)) %>%
+  mutate(sport_label = ifelse(row_number() == 1, type, NA),
+         sport_label_2 = ifelse(year == 2016, type, NA)) %>%
   ungroup()
 
-sport_labels <- tibble(
-  x = c(1, 1),
-  
-  y = c(10, )
-  
-  label = c("Tennis")
-  
-)
 
 # Paralympic logo
 logo <- image_read("https://www.paralympic.org/sites/default/files/styles/large_original/public/2019-12/IPC%20logo.jpg?itok=lVrcjjSR")
@@ -88,12 +81,14 @@ ggplot(data = sport_events_year,
   geom_stratum(width = 1/3, alpha = 0, color = NA) +
   geom_text(data = sport_events_year, #%>%
               #filter(type %in% c("")),
-            mapping = aes(label = sport_label),
+            mapping = aes(label = sport_label,
+                          x = as.factor(year)),
             stat = "stratum",
             family = font,
             color = "#FFFFFF",
-            hjust = "inward",
-            size = 4) +
+            size = 4,
+            hjust = 0.5,
+            nudge_x = 0) +
   guides(fill = "none") +
   coord_cartesian(expand = FALSE,
                   clip = "off") +
