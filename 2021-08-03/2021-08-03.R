@@ -18,7 +18,19 @@ paralympics <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidyt
 sport_events_year <- paralympics %>%
   select(year, type, event) %>%
   unique() %>%
-  count(year, type)
+  count(year, type) %>%
+  group_by(type) %>%
+  mutate(sport_label = ifelse(row_number() == 1, type, NA)) %>%
+  ungroup()
+
+sport_labels <- tibble(
+  x = c(1, 1),
+  
+  y = c(10, )
+  
+  label = c("Tennis")
+  
+)
 
 # Paralympic logo
 logo <- image_read("https://www.paralympic.org/sites/default/files/styles/large_original/public/2019-12/IPC%20logo.jpg?itok=lVrcjjSR")
@@ -52,7 +64,7 @@ theme_update(
   legend.title = element_text(size = 12, color = fontcolor),
   
   plot.title.position = "plot",
-  plot.title = element_markdown(size = 20, color = fontcolor, family = titlefont),
+  plot.title = element_markdown(size = 16, color = fontcolor, family = titlefont),
   
   plot.subtitle = element_markdown(size = 11, color = fontcolor, family = font, lineheight = 1.5),
   
@@ -66,44 +78,42 @@ theme_update(
 #### Plot ####
 
 ggplot(data = sport_events_year,
-       mapping = aes(axis1 = as.factor(year),
-                     axis2 = type,
+       mapping = aes(x = as.factor(year),
+                     stratum = type,
+                     alluvium = type,
+                     fill = type,
+                     weight = n,
                      y = n)) +
-  geom_alluvium(aes(fill = type), width = 1/12) +
-  geom_stratum(width = 1/12, fill = "black", color = "grey") +
-  geom_label(stat = "stratum", aes(label = after_stat(stratum)))
-  
-  annotation_custom(logo,
-                    xmin = -5,
-                    xmax = 3,
-                    ymin = -23) +
-  
-  
-  geom_tile(color = bcolor) +
-  scale_fill_gradient(low = "#67B6DB",
-                      high = "#014261",
-                      na.value = "#F0F0F0",
-                      guide = guide_colorbar(title.position = "top",
-                                             barwidth = 10,
-                                             barheight = 1))  +
-  
+  geom_alluvium(alpha = 0.8) +
+  geom_stratum(width = 1/3, alpha = 0, color = NA) +
+  geom_text(data = sport_events_year, #%>%
+              #filter(type %in% c("")),
+            mapping = aes(label = sport_label),
+            stat = "stratum",
+            family = font,
+            color = "#FFFFFF",
+            hjust = "inward",
+            size = 4) +
+  guides(fill = "none") +
   coord_cartesian(expand = FALSE,
                   clip = "off") +
-  labs(title = "The number of sports and events at the Paralympics have increased over time.<br><br><br><br>",
+  scale_fill_manual(values = c("#208eb7", "#1c4c5e", "#7ec993", "#1c5f1e", 
+                               "#9bc732", "#5826a6", "#bcaff9", "#5064be", 
+                               "#cd49dc", "#af2168", "#7b3f5b")) +
+  labs(title = "The 1984 Paralympics had the greatest number of events and saw the addition of Powerlifting. Since then, the number<br>
+  <br>of overall events has declined. Rugby was added to the 1996 games, and  the Triathlon was added in 2016.<br><br>",
        x = "",
        y = "",
-       fill = "Number of Events",
        caption = "<b>Data:</b> International Paralympic Committee | <b>Logo:</b> International Paralympic Committee | <b>Design:</b> Jenn Schilling") +
-  theme(legend.position = "bottom",
-        legend.justification = "right",
-        axis.line = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.text.y = element_text(size = 12, hjust = 1, vjust = 0),
-        axis.text.x = element_text(size = 12))
+  theme(axis.text.y = element_text(size = 10),
+        axis.text.x = element_text(size = 10))
+  
+  
+
 # Save
 ggsave("2021-08-03\\paralympics.png",
        plot = last_plot(),
        device = "png",
-       width = 12,
-       height = 8,
+       width = 14,
+       height = 9,
        type = "cairo")
