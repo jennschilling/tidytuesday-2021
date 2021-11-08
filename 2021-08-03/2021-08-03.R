@@ -33,7 +33,7 @@ sport_events_labels <- sport_events_year %>%
       type == "Archery" ~ 335,
       type == "Athletics" ~ 250,
       type == "Basketball" ~ 162,
-      type == "Fencing" ~ 153,
+      type == "Fencing" ~ 151,
       type == "Swimming" ~ 100,
       type == "Table Tennis" ~ 38,
       type == "Volleyball" ~ 25,
