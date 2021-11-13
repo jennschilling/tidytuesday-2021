@@ -79,7 +79,7 @@ theme_update(
 
   plot.caption.position = "plot",
   plot.caption = element_markdown(size = 6, color = fontcolor, 
-                                  family = titlefont, hjust = 1),
+                                  family = titlefont, hjust = 0.95),
   
   plot.margin = margin(t = 5, r = 0, b = 5, l = 5)
 )
