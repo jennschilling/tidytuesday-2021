@@ -12,6 +12,11 @@ library(ggtext)
 
 lemurs <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-08-24/lemur_data.csv')
 
+lemur_birth_death <- lemurs %>%
+  select(taxon, dlc_id, name, dob, dod, age_at_death_y, age_of_living_y) %>%
+  unique() %>%
+  arrange(taxon, dob) %>%
+  mutate(rnum = row_number()) 
 
 #### Formatting ####
 
@@ -52,3 +57,23 @@ theme_update(
 )
 
 #### Plot ####
+
+ggplot(data = lemur_birth_death %>% filter(!is.na(dod) & !is.na(dob)),
+       mapping = aes(x = dob,
+                     xend = dod,
+                     y = rnum,
+                     yend = rnum)) +
+  geom_segment() +
+  geom_point() +
+  facet_wrap(~ taxon,
+             scales = "free") +
+  scale_x_date(limits = c(as.Date("1940-01-01"), as.Date("2020-01-01"))) +
+  theme(axis.title.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.line.y = element_blank())
+
+ggplot(data = lemur_birth_death %>% filter(!is.na(age_at_death_y)),
+       mapping = aes(y = taxon,
+                     x = age_at_death_y)) +
+  geom_point(alpha = 0.5) 
