@@ -7,10 +7,31 @@
 library(tidyverse)
 library(extrafont)
 library(ggtext)
+library(scales)
 
 #### Data #### 
 
 bird_baths <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-08-31/bird_baths.csv')
+
+bird_baths_total <- bird_baths %>%
+  filter(!is.na(survey_year)) %>%
+  group_by(survey_year, bioregions) %>%
+  summarise(total_birds = sum(bird_count),
+            .groups = "drop")
+
+bird_baths_types <- bird_baths %>%
+  filter(!is.na(survey_year) & bird_count > 0) %>%
+  select(survey_year, bioregions, bird_type) %>%
+  unique() %>%
+  count(survey_year, bioregions)
+
+bird_baths_labs <- bird_baths_total %>%
+  group_by(bioregions) %>%
+  summarize(survey_year = min(survey_year),
+            .groups = "drop") %>%
+  left_join(bird_baths_total, by = c("bioregions", "survey_year")) %>%
+  left_join(bird_baths_types, by = c("bioregions", "survey_year")) %>%
+  mutate(label = str_wrap(bioregions, width = 30))
 
 #### Formatting ####
 
@@ -49,3 +70,64 @@ theme_update(
   
   plot.margin = margin(t = 10, r = 10, b = 10, l = 10)
 )
+
+#### Plot ####
+
+ggplot(data = bird_baths_total,
+       mapping = aes(x = survey_year,
+                     y = total_birds,
+                     color = bioregions)) +
+  geom_point() +
+  geom_line() +
+  geom_text(data = bird_baths_labs %>% filter(survey_year == 2015),
+            mapping = aes(label = label),
+            family = font,
+            lineheight = 0.75,
+            color = fontcolor,
+            hjust = 0,
+            vjust = 0) +
+  geom_text(data = bird_baths_labs %>% filter(survey_year == 2014),
+            mapping = aes(label = label),
+            family = font,
+            lineheight = 0.75,
+            color = fontcolor,
+            hjust = 1,
+            vjust = 0) +
+  scale_x_continuous(breaks = c(2014, 2015),
+                     limits = c(2013.5, 2015.5)) +
+  scale_y_continuous(labels = comma_format()) +
+  coord_cartesian(clip = "off") +
+  guides(color = "none") +
+  labs(x = "",
+       y = "") +
+  theme(axis.line = element_blank())
+
+
+ggplot(data = bird_baths_types,
+       mapping = aes(x = survey_year,
+                     y = n,
+                     color = bioregions)) +
+  geom_point() +
+  geom_line() +
+  geom_text(data = bird_baths_labs %>% filter(survey_year == 2015),
+            mapping = aes(label = label),
+            family = font,
+            lineheight = 0.75,
+            color = fontcolor,
+            hjust = 0,
+            vjust = 0) +
+  geom_text(data = bird_baths_labs %>% filter(survey_year == 2014),
+            mapping = aes(label = label),
+            family = font,
+            lineheight = 0.75,
+            color = fontcolor,
+            hjust = 1,
+            vjust = 0) +
+  scale_x_continuous(breaks = c(2014, 2015),
+                     limits = c(2013.5, 2015.5)) +
+  scale_y_continuous(labels = comma_format()) +
+  coord_cartesian(clip = "off") +
+  guides(color = "none") +
+  labs(x = "",
+       y = "") +
+  theme(axis.line = element_blank())
