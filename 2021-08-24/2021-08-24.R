@@ -7,7 +7,6 @@
 library(tidyverse)
 library(extrafont)
 library(ggtext)
-library(gghalves)
 
 #### Data #### 
 
