@@ -95,7 +95,7 @@ ggplot() +
   guides(fill = "none") +
   labs(title = "SPICE GIRLS | I wanna really, really, really wanna sing a solo",
        subtitle = "<br>Posh is featured the least. Ginger is featured frequently in the first two albums but not on Forever.<br><br>
-       <span style = 'font-size:18pt'><b>How to read:</b> Each song in an album is a row and each line in a song is a column. Songs are in album order. Shaded areas represent who sings the line.<br></span>",
+       <span style = 'font-size:18pt'><b>How to read:</b> Each row is a song in an album. Each column is a line in a song. Songs are in album order. Shaded areas represent who sings the line.<br></span>",
        caption = "<br><b>Data:</b> Spotify and Genius credit Jacquie Tran | <b>Design:</b> Jenn Schilling") 
 
 # Save
