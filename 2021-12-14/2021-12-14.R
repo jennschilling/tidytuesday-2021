@@ -12,17 +12,14 @@ library(tidytext)
 #### Data #### 
 
 studio_album_tracks <- read_csv("https://github.com/jacquietran/spice_girls_data/raw/main/data/studio_album_tracks.csv")
-lyrics <- read_csv("https://github.com/jacquietran/spice_girls_data/raw/main/data/lyrics.csv")
-related_artists <- read_csv("https://github.com/jacquietran/spice_girls_data/raw/main/data/related_artists.csv")
-
+lyrics <- read.csv("https://github.com/jacquietran/spice_girls_data/raw/main/data/lyrics.csv")
 
 #### Analysis ####
 
 # Who sings the most and when?
 
-song_word_count <- lyrics %>%
-  unnest_tokens(word, line) %>%
-  count(album_name, song_name, section_name, section_artist) %>%
+song_line_count <- lyrics %>%
+  count(album_name, song_name, track_number, section_name, section_artist, line_number) %>%
   mutate(all = ifelse(str_detect(section_artist, "All") | str_detect(section_artist, "Spice Girls"), n, 0),
          baby = ifelse(str_detect(section_artist, "Baby"), n, 0),
          ginger = ifelse(str_detect(section_artist, "Ginger"), n, 0),
@@ -31,36 +28,10 @@ song_word_count <- lyrics %>%
          sporty = ifelse(str_detect(section_artist, "Sporty"), n, 0)) %>%
   pivot_longer(all:sporty,
                names_to = "artist",
-               values_to = "word_count") %>%
-  filter(word_count > 0) %>%
+               values_to = "line_count") %>%
+  filter(line_count > 0) %>%
   select(-n) %>%
-  mutate(section_adj = case_when(
-    str_detect(section_name, "Pre-Chorus") ~ "Pre-Chorus",
-    TRUE ~ section_name),
-    # Most frequent song sections: Bridge, Chorus, Intro, Outro, Pre-Chorus, Verse 1, Verse 2
-    freq_section = section_adj %in% c("Bridge", "Chorus", "Intro", "Outro", "Pre-Chorus", "Verse 1", "Verse 2"))
-
-
-total_song_word_count <- song_word_count %>%
-  filter(freq_section) %>%
-  group_by(album_name, section_adj, artist) %>%
-  summarise(total_words = sum(word_count),
-            .groups = "drop") %>%
-  ungroup() %>%
-  group_by(album_name, section_adj) %>%
-  mutate(total_words_section = sum(total_words)) %>%
-  ungroup() %>%
-  mutate(perc_section_album = total_words / total_words_section,
-         section_adj = factor(section_adj,
-                              levels = c("Outro",
-                                         "Bridge",
-                                         "Post-Chorus",
-                                         "Chorus",
-                                         "Pre-Chorus",
-                                         "Verse 2",
-                                         "Verse 1",
-                                         "Intro")),
-         album_name = str_to_upper(album_name),
+  mutate(album_name = str_to_upper(album_name),
          album_name = factor(album_name,
                              levels = c("SPICE", "SPICEWORLD", "FOREVER")),
          artist = str_to_title(artist))
@@ -82,19 +53,18 @@ theme_update(
   plot.background = element_rect(fill = b_color, color = NA),
   
   axis.title = element_blank(),
-  axis.text.x = element_text(size = 20, family = title_font, color = font_color),
-  axis.text.y = element_text(size = 20, color = font_color),
+  strip.text = element_text(size = 20, family = title_font, color = font_color),
+  strip.text.y.left = element_text(size = 20, family = title_font, color = font_color, angle = 0),
+  axis.text = element_blank(),
   
   axis.ticks = element_blank(),
   axis.line = element_blank(),
-  
-  strip.text = element_text(size = 10, color = font_color, hjust = 0),
   
   legend.text = element_text(size = 10, color = font_color),
   legend.title = element_text(size = 10, color = font_color),
   
   plot.title.position = "plot",
-  plot.title = element_markdown(size = 30, color = font_color, family = title_font),
+  plot.title = element_markdown(size = 35, color = font_color, family = title_font),
   
   plot.subtitle = element_markdown(size = 24, color = font_color, family = font),
   
@@ -107,26 +77,31 @@ theme_update(
 #### Plot ####
 
 ggplot() +
-  geom_text(data = total_song_word_count,
-            mapping = aes(x = album_name,
-                          y = section_adj,
-                          size = perc_section_album,
-                          color = artist,
-                          label = artist),
-            position = position_jitter(width = 0.3, height = 0.3, seed = 8),
-            family = font) +
-  geom_hline(data = tibble(yintercept = c(1.5, 2.5, 3.5, 4.5, 5.5, 6.5)),
-             mapping = aes(yintercept = yintercept)) +
-  geom_vline(data = tibble(xintercept = c(1.5, 2.5)),
-             mapping = aes(xintercept = xintercept)) +
-  scale_color_manual(values = c("#000000", # All
+  geom_tile(data = song_line_count,
+            mapping = aes(y = track_number,
+                          x = line_number,
+                          fill = artist)) +
+  facet_grid(artist ~ album_name,
+             switch = "y",
+             scales = "free") +
+  scale_y_reverse() +
+  scale_fill_manual(values = c("#000000", # All
                                 "#0079B6", # Baby
                                 "#D20A75", # Ginger
                                 "#1E7251", # Posh
                                 "#EC7E05", # Scary
                                 "#CA2D04")) + # Sporty 
-  scale_size_continuous(range = c(4, 9)) +
-  scale_x_discrete(position = "top") +
-  guides(color = "none",
-         size = "none") +
-  labs(title = "SPICE WORLD")
+  coord_cartesian(clip = "off") +
+  guides(fill = "none") +
+  labs(title = "SPICE GIRLS: WHO SINGS?",
+       subtitle = "Posh is featured the least. Ginger is featured frequently in the first two albums but not on Forever.<br>
+       <span style = 'font-size:14pt'><b>How to read:</b> Each song in an album is a row and each line in a song is a column. Songs are in album order. Shaded areas represent who sings the line.</span>",
+       caption = "<br><b>Data:</b> Spotify and Genius from Jacquie Tran | <b>Design:</b> Jenn Schilling") 
+
+# Save
+ggsave("2021-12-14\\spice_girls.png",
+       plot = last_plot(),
+       device = "png",
+       width = 11,
+       height = 10,
+       type = "cairo")
