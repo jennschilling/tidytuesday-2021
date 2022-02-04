@@ -66,10 +66,10 @@ theme_update(
   plot.title.position = "plot",
   plot.title = element_markdown(size = 35, color = font_color, family = title_font),
   
-  plot.subtitle = element_markdown(size = 24, color = font_color, family = font),
+  plot.subtitle = element_markdown(size = 26, color = font_color, family = font),
   
   plot.caption.position = "plot",
-  plot.caption = element_markdown(size = 8, color = font_color, hjust = 1),
+  plot.caption = element_markdown(size = 12, color = font_color, hjust = 1),
   
   plot.margin = margin(t = 10, r = 10, b = 10, l = 10)
 )
@@ -93,15 +93,15 @@ ggplot() +
                                 "#CA2D04")) + # Sporty 
   coord_cartesian(clip = "off") +
   guides(fill = "none") +
-  labs(title = "SPICE GIRLS: WHO SINGS?",
-       subtitle = "<span style = 'font-size:8pt'><br></span>Posh is featured the least. Ginger is featured frequently in the first two albums but not on Forever.<br>
-       <span style = 'font-size:14pt'><b>How to read:</b> Each song in an album is a row and each line in a song is a column. Songs are in album order. Shaded areas represent who sings the line.<br></span>",
-       caption = "<br><b>Data:</b> Spotify and Genius from Jacquie Tran | <b>Design:</b> Jenn Schilling") 
+  labs(title = "SPICE GIRLS | I wanna really, really, really wanna sing a solo",
+       subtitle = "<br>Posh is featured the least. Ginger is featured frequently in the first two albums but not on Forever.<br><br>
+       <span style = 'font-size:18pt'><b>How to read:</b> Each song in an album is a row and each line in a song is a column. Songs are in album order. Shaded areas represent who sings the line.<br></span>",
+       caption = "<br><b>Data:</b> Spotify and Genius credit Jacquie Tran | <b>Design:</b> Jenn Schilling") 
 
 # Save
 ggsave("2021-12-14\\spice_girls.png",
        plot = last_plot(),
        device = "png",
-       width = 11,
-       height = 10,
+       width = 13,
+       height = 12,
        type = "cairo")
