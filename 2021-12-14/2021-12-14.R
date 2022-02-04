@@ -94,8 +94,8 @@ ggplot() +
   coord_cartesian(clip = "off") +
   guides(fill = "none") +
   labs(title = "SPICE GIRLS: WHO SINGS?",
-       subtitle = "Posh is featured the least. Ginger is featured frequently in the first two albums but not on Forever.<br>
-       <span style = 'font-size:14pt'><b>How to read:</b> Each song in an album is a row and each line in a song is a column. Songs are in album order. Shaded areas represent who sings the line.</span>",
+       subtitle = "<span style = 'font-size:8pt'><br></span>Posh is featured the least. Ginger is featured frequently in the first two albums but not on Forever.<br>
+       <span style = 'font-size:14pt'><b>How to read:</b> Each song in an album is a row and each line in a song is a column. Songs are in album order. Shaded areas represent who sings the line.<br></span>",
        caption = "<br><b>Data:</b> Spotify and Genius from Jacquie Tran | <b>Design:</b> Jenn Schilling") 
 
 # Save
