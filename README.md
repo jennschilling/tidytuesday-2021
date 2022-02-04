@@ -2,6 +2,9 @@
 
 Data visualizations developed in R using data from [#TidyTuesday 2021](https://github.com/rfordatascience/tidytuesday/tree/master/data/2021).
 
+# 14 December 2021
+![](https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-12-14/spice_girls.png)
+
 # 9 November 2021
 <img src="https://github.com/jennschilling/tidytuesday-2021/blob/main/2021-11-09/afrimap.png" width="500"></img> 
 
